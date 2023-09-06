@@ -77,7 +77,7 @@ func (l *LinkedList[T]) AddFirst(value T) {
 	}
 }
 
-func (l *LinkedList[T]) AddAt(value T, index int) error {
+func (l *LinkedList[T]) Add(value T, index int) error {
 	switch {
 	case index >= l.size:
 		return errors.New("OutOfBounds")
@@ -105,4 +105,38 @@ func (l *LinkedList[T]) AddAt(value T, index int) error {
 	nodeAtPosition.previous = &newNode
 
 	return nil
+}
+
+func (l *LinkedList[T]) RemoveLast() T {
+	value := l.tail.value
+	l.tail = l.tail.previous
+	l.tail.next = nil
+	return value
+}
+
+func (l *LinkedList[T]) RemoveFirst() T {
+
+	value := l.head.value
+	l.head = l.head.next
+	l.head.previous = nil
+	return value
+}
+
+func (l *LinkedList[T]) Remove(index int) (T, error) {
+	switch {
+	case index >= l.size:
+		return *new(T), errors.New("OutOfBounds")
+	case index == 0:
+		return l.RemoveFirst(), nil
+	case index == l.size-1:
+		return l.RemoveLast(), nil
+	}
+
+	nodeToRemove, err := getNode[T](l.head, index)
+	if err != nil {
+		return *new(T), err
+	}
+	nodeToRemove.previous.next = nodeToRemove.next
+	nodeToRemove.next.previous = nodeToRemove.previous
+	return nodeToRemove.value, nil
 }
