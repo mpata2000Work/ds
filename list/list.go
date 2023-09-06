@@ -91,12 +91,12 @@ func (l *LinkedList[T]) AddFirst(value T) {
 
 func (l *LinkedList[T]) Add(value T, index int) error {
 	switch {
-	case index >= l.size:
+	case index > l.size:
 		return errors.New("OutOfBounds")
 	case index == 0:
 		l.AddFirst(value)
 		return nil
-	case index == l.size-1:
+	case index == l.size:
 		l.AddLast(value)
 		return nil
 	}
