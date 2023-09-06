@@ -13,16 +13,27 @@ type Node[T any] struct {
 type LinkedList[T any] struct {
 	head, tail *Node[T]
 	size       int
+	comparator func(T, T) int
 }
 
-func NewList[T any]() *LinkedList[T] {
-	return &LinkedList[T]{nil, nil, 0}
+/*
+Creates a new List
+Comparator function should return
+* 0 if ir is equal
+* 0>(Greater than 0) if it v1 is greater than v2
+* 0<(Less than 0) if it v1 is lower than v2
+*/
+func NewList[T any](comparator func(T, T) int) *LinkedList[T] {
+	return &LinkedList[T]{nil, nil, 0, comparator}
 }
 
 func (l LinkedList[T]) IsEmpty() bool {
 	return l.size == 0
 }
 
+/*
+Get size of the list
+*/
 func (l LinkedList[T]) Size() int {
 	return l.size
 }
@@ -175,26 +186,79 @@ func (l *LinkedList[T]) PreatyPrint() {
 	fmt.Print("\n")
 }
 
-func (l *LinkedList[T]) Pop() {
+// Stack Functions
 
+/*
+Removes the value at the top of the stack and retrieves the value
+Equivalent to RemoveLast()
+*/
+func (l *LinkedList[T]) Pop() T {
+	return l.RemoveLast()
 }
 
-func (l *LinkedList[T]) Push() {
-
+func (l *LinkedList[T]) Push(value T) {
+	l.AddLast(value)
 }
 
 func (l LinkedList[T]) Top() T {
 	return l.tail.value
 }
 
-func (l *LinkedList[T]) Queue() {
-
+//
+// Queue Functions
+//
+/*
+Add value to the end of the queue
+Equivalent to AddLast()
+*/
+func (l *LinkedList[T]) Queue(value T) {
+	l.AddLast(value)
 }
 
-func (l *LinkedList[T]) Dequeue() {
-
+/*
+Removes the value at the begining of the queue and retrives its value
+Equivalent to RemoveFirst()
+*/
+func (l *LinkedList[T]) Dequeue() T {
+	return l.RemoveFirst()
 }
 
+/*
+Retrieves the value of the next int the queue without deleting it
+*/
 func (l LinkedList[T]) Peek() T {
 	return l.head.value
+}
+
+func getNodeByValue[T any](node *Node[T], value T, cmp func(T, T) int, index int) (int, *Node[T]) {
+	if node == nil || cmp(value, node.value) == 0 {
+		return index, node
+	}
+	return getNodeByValue[T](node.next, value, cmp, index+1)
+}
+
+/*
+Returns index of value or -1 if it isnt in the List
+*/
+func (l LinkedList[T]) IndexOf(value T) int {
+	index, node := getNodeByValue[T](l.head, value, l.comparator, 0)
+	if node == nil {
+		return -1 //TODO: Make const
+	}
+	return index
+}
+
+/*
+Returns true if value is in List, false if it isnt
+*/
+func (l LinkedList[T]) Contains(value T) bool {
+	return l.IndexOf(value) >= 0
+}
+
+func (l *LinkedList[T]) ForEach(f func(T) T) {
+	node := l.head
+	for node != nil {
+		node.value = f(node.value)
+		node = node.next
+	}
 }

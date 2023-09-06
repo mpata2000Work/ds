@@ -5,9 +5,13 @@ import (
 	"fmt"
 )
 
+func comp(v1 int, v2 int) int {
+	return v1 - v2
+}
+
 func main() {
 	fmt.Println("hi")
-	hi := list.NewList[int]()
+	hi := list.NewList[int](comp)
 	hi.AddLast(0)
 	hi.AddLast(1)
 	hi.AddLast(2)
