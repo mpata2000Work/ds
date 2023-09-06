@@ -21,8 +21,6 @@ func main() {
 	hi.PrettyPrint()
 
 	fmt.Println("Size: ", hi.Size())
-	fmt.Println("Head ", hi.Peek())
-	fmt.Println("Tail ", hi.Top())
 	r, _ := hi.GetAt(1)
 	fmt.Println("At index 1: ", r)
 	r, _ = hi.GetAt(4)

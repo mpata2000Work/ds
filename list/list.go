@@ -38,12 +38,18 @@ func (l *LinkedList[T]) Size() int {
 	return l.size
 }
 
-func (l *LinkedList[T]) GetFirst() T {
-	return l.head.value
+func (l *LinkedList[T]) GetFirst() (T, error) {
+	if l.IsEmpty() {
+		return *new(T), errors.New("NoSuchElement")
+	}
+	return l.head.value, nil
 }
 
-func (l *LinkedList[T]) GetLast() T {
-	return l.tail.value
+func (l *LinkedList[T]) GetLast() (T, error) {
+	if l.IsEmpty() {
+		return *new(T), errors.New("NoSuchElement")
+	}
+	return l.tail.value, nil
 }
 
 func getNode[T any](node *Node[T], i int) (*Node[T], error) {
@@ -126,6 +132,7 @@ func (l *LinkedList[T]) RemoveLast() T {
 	value := l.tail.value
 	l.tail = l.tail.previous
 	l.tail.next = nil
+	l.size--
 	return value
 }
 
@@ -136,6 +143,7 @@ func (l *LinkedList[T]) RemoveFirst() T {
 	value := l.head.value
 	l.head = l.head.next
 	l.head.previous = nil
+	l.size--
 	return value
 }
 
@@ -200,8 +208,8 @@ func (l *LinkedList[T]) Push(value T) {
 	l.AddLast(value)
 }
 
-func (l *LinkedList[T]) Top() T {
-	return l.tail.value
+func (l *LinkedList[T]) Top() (T, error) {
+	return l.GetLast()
 }
 
 //
@@ -226,8 +234,8 @@ func (l *LinkedList[T]) Dequeue() T {
 /*
 Peek Retrieves the value of the next int the queue without deleting it
 */
-func (l *LinkedList[T]) Peek() T {
-	return l.head.value
+func (l *LinkedList[T]) Peek() (T, error) {
+	return l.GetFirst()
 }
 
 func getNodeByValue[T any](node *Node[T], value T, cmp func(T, T) int, index int) (int, *Node[T]) {
