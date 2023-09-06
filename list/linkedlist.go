@@ -27,11 +27,11 @@ func (l LinkedList[T]) Size() int {
 	return l.size
 }
 
-func (l LinkedList[T]) getFirst() T {
+func (l LinkedList[T]) GetFirst() T {
 	return l.head.value
 }
 
-func (l LinkedList[T]) getLast() T {
+func (l LinkedList[T]) GetLast() T {
 	return l.tail.value
 }
 
