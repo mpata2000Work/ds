@@ -8,7 +8,21 @@ import (
 func main() {
 	fmt.Println("hi")
 	hi := list.NewList[int]()
+	hi.Add(0)
 	hi.Add(1)
 	hi.Add(2)
+	hi.Add(3)
+	hi.Add(4)
+
+	fmt.Println("Size: ", hi.Size())
+	fmt.Println("Head ", hi.Peek())
+	fmt.Println("Tail ", hi.Top())
+	r, _ := hi.GeatAt(1)
+	fmt.Println("At index 1: ", r)
+	r, _ = hi.GeatAt(4)
+	fmt.Println("At index 4: ", r)
+	t, err := hi.GeatAt(5)
+	fmt.Println("At index 5: ", t)
+	fmt.Println("Err: ", err)
 
 }
