@@ -27,11 +27,11 @@ func (l LinkedList[T]) Size() int {
 	return l.size
 }
 
-func (l LinkedList[T]) Peek() T {
+func (l LinkedList[T]) getFirst() T {
 	return l.head.value
 }
 
-func (l LinkedList[T]) Top() T {
+func (l LinkedList[T]) getLast() T {
 	return l.tail.value
 }
 
@@ -45,7 +45,7 @@ func getNode[T any](node *Node[T], i int) (*Node[T], error) {
 	return getNode[T](node.next, i-1)
 }
 
-func (l LinkedList[T]) GeatAt(i int) (T, error) {
+func (l LinkedList[T]) GetAt(i int) (T, error) {
 	node, err := getNode[T](l.head, i)
 	if err != nil {
 		return *new(T), err
@@ -173,4 +173,28 @@ func (l *LinkedList[T]) PreatyPrint() {
 		node = node.next
 	}
 	fmt.Print("\n")
+}
+
+func (l *LinkedList[T]) Pop() {
+
+}
+
+func (l *LinkedList[T]) Push() {
+
+}
+
+func (l LinkedList[T]) Top() T {
+	return l.tail.value
+}
+
+func (l *LinkedList[T]) Queue() {
+
+}
+
+func (l *LinkedList[T]) Dequeue() {
+
+}
+
+func (l LinkedList[T]) Peek() T {
+	return l.head.value
 }
