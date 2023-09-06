@@ -13,7 +13,7 @@ type Node[T any] struct {
 type LinkedList[T any] struct {
 	head, tail *Node[T]
 	size       int
-	comparator func(T, T) int
+	Comparator func(T, T) int
 }
 
 /*
@@ -231,6 +231,9 @@ func (l LinkedList[T]) Peek() T {
 }
 
 func getNodeByValue[T any](node *Node[T], value T, cmp func(T, T) int, index int) (int, *Node[T]) {
+	if cmp == nil {
+		return -1, nil
+	}
 	if node == nil || cmp(value, node.value) == 0 {
 		return index, node
 	}
@@ -241,7 +244,10 @@ func getNodeByValue[T any](node *Node[T], value T, cmp func(T, T) int, index int
 Returns index of value or -1 if it isnt in the List
 */
 func (l LinkedList[T]) IndexOf(value T) int {
-	index, node := getNodeByValue[T](l.head, value, l.comparator, 0)
+	if l.Comparator == nil {
+		return -1
+	}
+	index, node := getNodeByValue[T](l.head, value, l.Comparator, 0)
 	if node == nil {
 		return -1 //TODO: Make const
 	}
@@ -256,6 +262,9 @@ func (l LinkedList[T]) Contains(value T) bool {
 }
 
 func (l *LinkedList[T]) ForEach(f func(T) T) {
+	if f == nil {
+		return
+	}
 	node := l.head
 	for node != nil {
 		node.value = f(node.value)
