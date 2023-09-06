@@ -15,10 +15,10 @@ func main() {
 	hi.AddLast(0)
 	hi.AddLast(1)
 	hi.AddLast(2)
-	hi.PreatyPrint()
+	hi.PrettyPrint()
 	hi.AddLast(3)
 	hi.AddLast(4)
-	hi.PreatyPrint()
+	hi.PrettyPrint()
 
 	fmt.Println("Size: ", hi.Size())
 	fmt.Println("Head ", hi.Peek())

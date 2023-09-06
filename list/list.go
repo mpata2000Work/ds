@@ -17,7 +17,7 @@ type LinkedList[T any] struct {
 }
 
 /*
-Creates a new List
+NewList Creates a new List
 Comparator function should return
 * 0 if ir is equal
 * 0>(Greater than 0) if it v1 is greater than v2
@@ -27,22 +27,22 @@ func NewList[T any](comparator func(T, T) int) *LinkedList[T] {
 	return &LinkedList[T]{nil, nil, 0, comparator}
 }
 
-func (l LinkedList[T]) IsEmpty() bool {
+func (l *LinkedList[T]) IsEmpty() bool {
 	return l.size == 0
 }
 
 /*
-Get size of the list
+Size Get size of the list
 */
-func (l LinkedList[T]) Size() int {
+func (l *LinkedList[T]) Size() int {
 	return l.size
 }
 
-func (l LinkedList[T]) GetFirst() T {
+func (l *LinkedList[T]) GetFirst() T {
 	return l.head.value
 }
 
-func (l LinkedList[T]) GetLast() T {
+func (l *LinkedList[T]) GetLast() T {
 	return l.tail.value
 }
 
@@ -56,7 +56,7 @@ func getNode[T any](node *Node[T], i int) (*Node[T], error) {
 	return getNode[T](node.next, i-1)
 }
 
-func (l LinkedList[T]) GetAt(i int) (T, error) {
+func (l *LinkedList[T]) GetAt(i int) (T, error) {
 	node, err := getNode[T](l.head, i)
 	if err != nil {
 		return *new(T), err
@@ -175,7 +175,7 @@ func (l *LinkedList[T]) ToArray() []T {
 	return arr
 }
 
-func (l *LinkedList[T]) PreatyPrint() {
+func (l *LinkedList[T]) PrettyPrint() {
 	node := l.head
 	fmt.Print(node.value)
 	for node.next != nil {
@@ -200,7 +200,7 @@ func (l *LinkedList[T]) Push(value T) {
 	l.AddLast(value)
 }
 
-func (l LinkedList[T]) Top() T {
+func (l *LinkedList[T]) Top() T {
 	return l.tail.value
 }
 
@@ -224,9 +224,9 @@ func (l *LinkedList[T]) Dequeue() T {
 }
 
 /*
-Retrieves the value of the next int the queue without deleting it
+Peek Retrieves the value of the next int the queue without deleting it
 */
-func (l LinkedList[T]) Peek() T {
+func (l *LinkedList[T]) Peek() T {
 	return l.head.value
 }
 
@@ -241,9 +241,9 @@ func getNodeByValue[T any](node *Node[T], value T, cmp func(T, T) int, index int
 }
 
 /*
-Returns index of value or -1 if it isnt in the List
+IndexOf Returns index of value or -1 if it isnt in the List
 */
-func (l LinkedList[T]) IndexOf(value T) int {
+func (l *LinkedList[T]) IndexOf(value T) int {
 	if l.Comparator == nil {
 		return -1
 	}
@@ -257,7 +257,7 @@ func (l LinkedList[T]) IndexOf(value T) int {
 /*
 Returns true if value is in List, false if it isnt
 */
-func (l LinkedList[T]) Contains(value T) bool {
+func (l *LinkedList[T]) Contains(value T) bool {
 	return l.IndexOf(value) >= 0
 }
 
