@@ -8,11 +8,13 @@ import (
 func main() {
 	fmt.Println("hi")
 	hi := list.NewList[int]()
-	hi.Add(0)
-	hi.Add(1)
-	hi.Add(2)
-	hi.Add(3)
-	hi.Add(4)
+	hi.AddLast(0)
+	hi.AddLast(1)
+	hi.AddLast(2)
+	hi.PreatyPrint()
+	hi.AddLast(3)
+	hi.AddLast(4)
+	hi.PreatyPrint()
 
 	fmt.Println("Size: ", hi.Size())
 	fmt.Println("Head ", hi.Peek())

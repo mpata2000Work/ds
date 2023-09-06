@@ -2,6 +2,7 @@ package list
 
 import (
 	"errors"
+	"fmt"
 )
 
 type Node[T any] struct {
@@ -91,7 +92,7 @@ func (l *LinkedList[T]) Add(value T, index int) error {
 
 	nodeAtPosition, err := getNode[T](l.head, index)
 	if err != nil {
-		//SHould never get here because outOfBounds check before
+		//Should never get here because outOfBounds check before
 		return err
 	}
 	previousNode := nodeAtPosition.previous
@@ -108,6 +109,9 @@ func (l *LinkedList[T]) Add(value T, index int) error {
 }
 
 func (l *LinkedList[T]) RemoveLast() T {
+	if l.size == 1 {
+		l.head = nil
+	}
 	value := l.tail.value
 	l.tail = l.tail.previous
 	l.tail.next = nil
@@ -115,7 +119,9 @@ func (l *LinkedList[T]) RemoveLast() T {
 }
 
 func (l *LinkedList[T]) RemoveFirst() T {
-
+	if l.size == 1 {
+		l.tail = nil
+	}
 	value := l.head.value
 	l.head = l.head.next
 	l.head.previous = nil
@@ -138,5 +144,33 @@ func (l *LinkedList[T]) Remove(index int) (T, error) {
 	}
 	nodeToRemove.previous.next = nodeToRemove.next
 	nodeToRemove.next.previous = nodeToRemove.previous
+	l.size--
 	return nodeToRemove.value, nil
+}
+
+func (l *LinkedList[T]) Clear() {
+	l.head = nil
+	l.tail = nil
+	l.size = 0
+}
+
+func (l *LinkedList[T]) ToArray() []T {
+	node := l.head
+	arr := make([]T, 0, l.size)
+	for node != nil {
+		arr = append(arr, node.value)
+		node = node.next
+	}
+	return arr
+}
+
+func (l *LinkedList[T]) PreatyPrint() {
+	node := l.head
+	fmt.Print(node.value)
+	for node.next != nil {
+		fmt.Print(" <-> ")
+		fmt.Print(node.next.value)
+		node = node.next
+	}
+	fmt.Print("\n")
 }
