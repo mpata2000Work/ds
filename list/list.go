@@ -52,18 +52,36 @@ func (l *LinkedList[T]) GetLast() (T, error) {
 	return l.tail.value, nil
 }
 
-func getNode[T any](node *Node[T], i int) (*Node[T], error) {
-	if node == nil {
+func (l *LinkedList[T]) getNodeAt(index int) (*Node[T], error) {
+	if index >= l.size || index < 0 {
 		return nil, errors.New("OutOfBounds")
 	}
-	if i == 0 {
-		return node, nil
+	var node *Node[T]
+	var moveForward bool
+	var i int
+	if index > l.size/2 {
+		node = l.tail
+		moveForward = false
+		i = l.size - 1
+	} else {
+		node = l.head
+		moveForward = true
 	}
-	return getNode[T](node.next, i-1)
+
+	for i != index {
+		if moveForward {
+			node = node.next
+			i++
+		} else {
+			node = node.previous
+			i--
+		}
+	}
+	return node, nil
 }
 
 func (l *LinkedList[T]) GetAt(i int) (T, error) {
-	node, err := getNode[T](l.head, i)
+	node, err := l.getNodeAt(i)
 	if err != nil {
 		return *new(T), err
 	}
@@ -96,20 +114,17 @@ func (l *LinkedList[T]) AddFirst(value T) {
 }
 
 func (l *LinkedList[T]) Add(value T, index int) error {
-	switch {
-	case index > l.size:
-		return errors.New("OutOfBounds")
-	case index == 0:
+	if index == 0 {
 		l.AddFirst(value)
 		return nil
-	case index == l.size:
+	}
+	if index == l.size {
 		l.AddLast(value)
 		return nil
 	}
 
-	nodeAtPosition, err := getNode[T](l.head, index)
+	nodeAtPosition, err := l.getNodeAt(index)
 	if err != nil {
-		//Should never get here because outOfBounds check before
 		return err
 	}
 	previousNode := nodeAtPosition.previous
@@ -148,16 +163,7 @@ func (l *LinkedList[T]) RemoveFirst() T {
 }
 
 func (l *LinkedList[T]) Remove(index int) (T, error) {
-	switch {
-	case index >= l.size:
-		return *new(T), errors.New("OutOfBounds")
-	case index == 0:
-		return l.RemoveFirst(), nil
-	case index == l.size-1:
-		return l.RemoveLast(), nil
-	}
-
-	nodeToRemove, err := getNode[T](l.head, index)
+	nodeToRemove, err := l.getNodeAt(index)
 	if err != nil {
 		return *new(T), err
 	}
