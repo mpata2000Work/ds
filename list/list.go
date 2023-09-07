@@ -20,12 +20,16 @@ type Stack[T any] interface {
 	Pop() (T, error)
 	Push(T)
 	Top() (T, error)
+	IsEmpty() bool
+	Size() int
 }
 
 type Queue[T any] interface {
 	Queue(T)
 	Dequeue() (T, error)
 	Peek() (T, error)
+	IsEmpty() bool
+	Size() int
 }
 
 /*

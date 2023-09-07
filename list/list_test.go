@@ -32,6 +32,13 @@ func TestCreateEmptyListWithComparator(t *testing.T) {
 	}
 }
 
+func TestIsEmptyInEmptyList(t *testing.T) {
+	l := NewList[int](comp)
+	if !l.IsEmpty() {
+		t.Error("List isnt empty")
+	}
+}
+
 func TestAddFirstInEmptyList(t *testing.T) {
 	l := NewList[int](comp)
 	l.AddFirst(0)
@@ -63,6 +70,27 @@ func TestAddLastInEmptyList(t *testing.T) {
 	}
 	if l.head.value != 0 {
 		t.Error("Value isnt correct Expected 0 got ", l.head.value)
+	}
+}
+
+func TestIsEmptyInList(t *testing.T) {
+	l := listOfFiveInts()
+	if l.IsEmpty() {
+		t.Error("List is empty")
+	}
+}
+
+func TestSizeInEmptyList(t *testing.T) {
+	l := NewList[int](comp)
+	if l.Size() != 0 {
+		t.Error("Size isnt correct Expected 0 got ", l.Size())
+	}
+}
+
+func TestSizeInList(t *testing.T) {
+	l := listOfFiveInts()
+	if l.Size() != 5 {
+		t.Error("Size isnt correct Expected 5 got ", l.Size())
 	}
 }
 
@@ -588,5 +616,74 @@ func TestIndexOfWithoutComparator(t *testing.T) {
 	_, err := l.IndexOf(0)
 	if err == nil {
 		t.Error("Error wasnt raised")
+	}
+}
+
+func TestToArrayInEmptyList(t *testing.T) {
+	l := NewList[int](comp)
+	arr := l.ToArray()
+	if len(arr) != 0 {
+		t.Error("Array isnt correct Expected [] got ", arr)
+	}
+}
+
+func TestToArrayInList(t *testing.T) {
+	l := listOfFiveInts()
+	arr := l.ToArray()
+	if len(arr) != 5 {
+		t.Error("Array isnt correct Expected [0 1 2 3 4] got ", arr)
+	}
+	if arr[0] != 0 || arr[1] != 1 || arr[2] != 2 || arr[3] != 3 || arr[4] != 4 {
+		t.Error("Array isnt correct Expected [0 1 2 3 4] got ", arr)
+	}
+}
+
+func TestToArrayInListAfterRemove(t *testing.T) {
+	l := listOfFiveInts()
+	l.RemoveFirst()
+	l.RemoveLast()
+	arr := l.ToArray()
+	if len(arr) != 3 {
+		t.Error("Array isnt correct Expected [1 2 3] got ", arr)
+	}
+	if arr[0] != 1 || arr[1] != 2 || arr[2] != 3 {
+		t.Error("Array isnt correct Expected [1 2 3] got ", arr)
+	}
+}
+
+func double(v int) int {
+	return v * 2
+}
+
+func TestForEachInEmptyList(t *testing.T) {
+	l := NewList[int](comp)
+	l.ForEach(double)
+	//No error
+	if !l.IsEmpty() {
+		t.Error("List isnt empty")
+	}
+}
+
+func TestForEachInList(t *testing.T) {
+	l := listOfFiveInts()
+	l.ForEach(double)
+	arr := l.ToArray()
+	if len(arr) != 5 {
+		t.Error("Array isnt correct Expected [0 2 4 6 8] got ", arr)
+	}
+	if arr[0] != 0 || arr[1] != 2 || arr[2] != 4 || arr[3] != 6 || arr[4] != 8 {
+		t.Error("Array isnt correct Expected [0 2 4 6 8] got ", arr)
+	}
+}
+
+func TestForEachInListNilFunction(t *testing.T) {
+	l := listOfFiveInts()
+	l.ForEach(nil)
+	arr := l.ToArray()
+	if len(arr) != 5 {
+		t.Error("Array isnt correct Expected [0 1 2 3 4] got ", arr)
+	}
+	if arr[0] != 0 || arr[1] != 1 || arr[2] != 2 || arr[3] != 3 || arr[4] != 4 {
+		t.Error("Array isnt correct Expected [0 1 2 3 4] got ", arr)
 	}
 }
