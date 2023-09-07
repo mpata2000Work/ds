@@ -160,6 +160,53 @@ func (l *LinkedList[T]) Add(index int, value T) error {
 	return nil
 }
 
+func (l *LinkedList[T]) AddArray(arr []T) error {
+	if len(arr) == 0 {
+		return errors.New("NoElementsInArray")
+	}
+
+	for _, v := range arr {
+		l.AddLast(v)
+	}
+	return nil
+}
+
+func (l *LinkedList[T]) AddArrayAt(index int, arr []T) error {
+	if index > l.size || index < 0 {
+		return errors.New("OutOfBounds")
+	}
+	if len(arr) == 0 {
+		return errors.New("NoElementsInArray")
+	}
+	if index == l.size {
+		return l.AddArray(arr)
+	}
+	tempList := ListFromArray[T](arr, nil)
+	nodeAtPos, err := l.getNodeAt(index)
+	if err != nil {
+		return err
+	}
+	prevNode := nodeAtPos.previous
+
+	if prevNode != nil {
+		prevNode.next = tempList.head
+		tempList.head = prevNode
+	}
+	nodeAtPos.previous = tempList.tail
+	tempList.tail = nodeAtPos
+
+	return nil
+}
+
+func (l *LinkedList[T]) Set(index int, value T) error {
+	node, err := l.getNodeAt(index)
+	if err != nil {
+		return err
+	}
+	node.value = value
+	return nil
+}
+
 func (l *LinkedList[T]) RemoveLast() (T, error) {
 	if l.tail == nil {
 		return *new(T), errors.New("NoSuchElement")
@@ -322,4 +369,41 @@ func (l *LinkedList[T]) ForEach(f func(T) T) {
 		node.value = f(node.value)
 		node = node.next
 	}
+}
+
+func (l *LinkedList[T]) Map(f func(T) T) []T {
+	var arr []T
+	if f == nil {
+		return arr
+	}
+	node := l.head
+	for node != nil {
+		arr = append(arr, f(node.value))
+		node = node.next
+	}
+	return arr
+}
+
+func (l *LinkedList[T]) Filter(f func(T) bool) []T {
+	var arr []T
+	if f == nil {
+		return arr
+	}
+	node := l.head
+	for node != nil {
+		if f(node.value) {
+			arr = append(arr, node.value)
+		}
+		node = node.next
+	}
+	return arr
+}
+
+func ListFromArray[T any](arr []T, comparator func(T, T) int) *LinkedList[T] {
+	l := NewList[T](comparator)
+
+	for _, v := range arr {
+		l.AddLast(v)
+	}
+	return l
 }
