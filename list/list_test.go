@@ -8,7 +8,7 @@ func comp(v1 int, v2 int) int {
 	return v1 - v2
 }
 
-func listOfFiveInts() *LinkedList[int] {
+func listOfFiveInts() LinkedList[int] {
 	l := NewList[int](comp)
 	l.AddLast(0)
 	l.AddLast(1)
@@ -20,14 +20,14 @@ func listOfFiveInts() *LinkedList[int] {
 
 func TestCreateEmptyListWithoutComparator(t *testing.T) {
 	l := NewList[int](nil)
-	if l == nil || l.head != nil || l.tail != nil || l.size != 0 || l.Comparator != nil {
+	if l.head != nil || l.tail != nil || l.size != 0 || l.Comparator != nil {
 		t.Error("List wasnt correctly initialize ", l)
 	}
 }
 
 func TestCreateEmptyListWithComparator(t *testing.T) {
 	l := NewList[int](comp)
-	if l == nil || l.head != nil || l.tail != nil || l.size != 0 || l.Comparator == nil {
+	if l.head != nil || l.tail != nil || l.size != 0 || l.Comparator == nil {
 		t.Error("List wasnt correctly initialize ", l)
 	}
 }
@@ -685,5 +685,173 @@ func TestForEachInListNilFunction(t *testing.T) {
 	}
 	if arr[0] != 0 || arr[1] != 1 || arr[2] != 2 || arr[3] != 3 || arr[4] != 4 {
 		t.Error("Array isnt correct Expected [0 1 2 3 4] got ", arr)
+	}
+}
+
+func TestListFromArray(t *testing.T) {
+	arr := []int{0, 1, 2, 3, 4}
+	l := ListFromArray(arr, comp)
+	if l.head.value != 0 || l.tail.value != 4 || l.size != 5 {
+		t.Error("List isnt correct Expected [0 1 2 3 4] got ", l)
+	}
+}
+
+func TestListFromArrayEmptyArray(t *testing.T) {
+	arr := []int{}
+	l := ListFromArray(arr, comp)
+	if l.head != nil || l.tail != nil || l.size != 0 {
+		t.Error("List isnt correct Expected [] got ", l)
+	}
+}
+
+func TestListFromArrayNilArray(t *testing.T) {
+	l := ListFromArray(nil, comp)
+	if l.head != nil || l.tail != nil || l.size != 0 {
+		t.Error("List isnt correct Expected [] got ", l)
+	}
+}
+
+func TestMapInEmptyList(t *testing.T) {
+	l := NewList[int](comp)
+	m := l.Map(double)
+	if !m.IsEmpty() {
+		t.Error("List isnt empty")
+	}
+}
+
+func TestMapInList(t *testing.T) {
+	l := listOfFiveInts()
+	m := l.Map(double)
+	arrList := l.ToArray()
+	arrMap := m.ToArray()
+	if len(arrList) != 5 {
+		t.Error("Array isnt correct Expected [0 1 2 3 4] got ", arrList)
+	}
+	if arrList[0] != 0 || arrList[1] != 1 || arrList[2] != 2 || arrList[3] != 3 || arrList[4] != 4 {
+		t.Error("Array isnt correct Expected [0 1 2 3 4] got ", arrList, " original list shouldnt be modified")
+	}
+	if len(arrMap) != 5 {
+		t.Error("Array isnt correct Expected [0 2 4 6 8] got ", arrMap)
+	}
+	if arrMap[0] != 0 || arrMap[1] != 2 || arrMap[2] != 4 || arrMap[3] != 6 || arrMap[4] != 8 {
+		t.Error("Array isnt correct Expected [0 2 4 6 8] got ", arrMap)
+	}
+}
+
+func TestMapInListNilFunction(t *testing.T) {
+	l := listOfFiveInts()
+	m := l.Map(nil)
+	if !m.IsEmpty() {
+		t.Error("List isnt empty")
+	}
+}
+
+func TestFilterInEmptyList(t *testing.T) {
+	l := NewList[int](comp)
+	m := l.Filter(func(v int) bool { return v%2 == 0 })
+	if !m.IsEmpty() {
+		t.Error("List isnt empty")
+	}
+}
+
+func TestFilterInList(t *testing.T) {
+	l := listOfFiveInts()
+	m := l.Filter(func(v int) bool { return v%2 == 0 })
+	arrList := l.ToArray()
+	arrMap := m.ToArray()
+	if len(arrList) != 5 {
+		t.Error("Array isnt correct Expected [0 1 2 3 4] got ", arrList)
+	}
+	if arrList[0] != 0 || arrList[1] != 1 || arrList[2] != 2 || arrList[3] != 3 || arrList[4] != 4 {
+		t.Error("Array isnt correct Expected [0 1 2 3 4] got ", arrList, " original list shouldnt be modified")
+	}
+	if len(arrMap) != 3 {
+		t.Error("Array isnt correct Expected [0 2 4] got ", arrMap)
+	}
+	if arrMap[0] != 0 || arrMap[1] != 2 || arrMap[2] != 4 {
+		t.Error("Array isnt correct Expected [0 2 4] got ", arrMap)
+	}
+}
+
+func TestFilterInListNilFunction(t *testing.T) {
+	l := listOfFiveInts()
+	m := l.Filter(nil)
+	if !m.IsEmpty() {
+		t.Error("List isnt empty")
+	}
+}
+
+func TestSetEmptyList(t *testing.T) {
+	l := NewList[int](comp)
+	err := l.Set(0, 0)
+	if err == nil {
+		t.Error("Error wasnt raised")
+	}
+}
+
+func TestSetList(t *testing.T) {
+	l := listOfFiveInts()
+	err := l.Set(1, 5)
+	if err != nil {
+		t.Error("Error was raised ", err)
+	}
+	if l.head.next.value != 5 {
+		t.Error("Value isnt correct Expected 5 got ", l.head.value)
+	}
+	if l.tail.value != 4 {
+		t.Error("Value isnt correct Expected 4 got ", l.tail.value)
+	}
+	if l.size != 5 {
+		t.Error("Size wasnt updated Expected 5 got ", l.size)
+	}
+}
+
+func TestSetListOutOfBounds(t *testing.T) {
+	l := listOfFiveInts()
+	err := l.Set(5, 5)
+	if err == nil {
+		t.Error("Error wasnt raised")
+	}
+}
+
+func TestSetListOutOfBoundsNegative(t *testing.T) {
+	l := listOfFiveInts()
+	err := l.Set(-1, 5)
+	if err == nil {
+		t.Error("Error wasnt raised")
+	}
+}
+
+func TestSetListAtStart(t *testing.T) {
+	l := listOfFiveInts()
+	err := l.Set(0, 5)
+	if err != nil {
+		t.Error("Error was raised ", err)
+	}
+	if l.head.value != 5 {
+		t.Error("Value isnt correct Expected 5 got ", l.head.value)
+	}
+	if l.tail.value != 4 {
+		t.Error("Value isnt correct Expected 4 got ", l.tail.value)
+	}
+	if l.size != 5 {
+		t.Error("Size wasnt updated Expected 5 got ", l.size)
+	}
+}
+
+func TestSetListAtEnd(t *testing.T) {
+	l := listOfFiveInts()
+	err := l.Set(4, 5)
+	if err != nil {
+		t.Error("Error was raised ", err)
+	}
+	if l.head.value != 0 {
+		t.Error("Value isnt correct Expected 0 got ", l.head.value)
+	}
+	if l.tail.value != 5 {
+		t.Error("Value isnt correct Expected 5 got ", l.tail.value)
+	}
+	if l.size != 5 {
+		t.Error("Size wasnt updated Expected 5 got ", l.size)
 	}
 }

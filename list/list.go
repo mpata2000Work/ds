@@ -39,8 +39,8 @@ Comparator function should return
 * 0>(Greater than 0) if it v1 is greater than v2
 * 0<(Less than 0) if it v1 is lower than v2
 */
-func NewList[T any](comparator func(T, T) int) *LinkedList[T] {
-	return &LinkedList[T]{nil, nil, 0, comparator}
+func NewList[T any](comparator func(T, T) int) LinkedList[T] {
+	return LinkedList[T]{nil, nil, 0, comparator}
 }
 
 func (l *LinkedList[T]) IsEmpty() bool {
@@ -281,60 +281,6 @@ func (l *LinkedList[T]) PrettyPrint() {
 	fmt.Print("\n")
 }
 
-// Stack Functions
-
-/*
-Removes the value at the top of the stack and retrieves the value
-Equivalent to RemoveLast()
-*/
-func (l *LinkedList[T]) Pop() (T, error) {
-	return l.RemoveLast()
-}
-
-func (l *LinkedList[T]) Push(value T) {
-	l.AddLast(value)
-}
-
-func (l *LinkedList[T]) Top() (T, error) {
-	return l.GetLast()
-}
-
-//
-// Queue Functions
-//
-/*
-Add value to the end of the queue
-Equivalent to AddLast()
-*/
-func (l *LinkedList[T]) Queue(value T) {
-	l.AddLast(value)
-}
-
-/*
-Removes the value at the begining of the queue and retrives its value
-Equivalent to RemoveFirst()
-*/
-func (l *LinkedList[T]) Dequeue() (T, error) {
-	return l.RemoveFirst()
-}
-
-/*
-Peek Retrieves the value of the next int the queue without deleting it
-*/
-func (l *LinkedList[T]) Peek() (T, error) {
-	return l.GetFirst()
-}
-
-func getNodeByValue[T any](node *Node[T], value T, cmp func(T, T) int, index int) (int, *Node[T]) {
-	if cmp == nil {
-		return -1, nil
-	}
-	if node == nil || cmp(value, node.value) == 0 {
-		return index, node
-	}
-	return getNodeByValue[T](node.next, value, cmp, index+1)
-}
-
 /*
 IndexOf Returns index of value or -1 if it isnt in the List
 */
@@ -342,11 +288,16 @@ func (l *LinkedList[T]) IndexOf(value T) (int, error) {
 	if l.Comparator == nil {
 		return -1, errors.New("comparator is nil")
 	}
-	index, node := getNodeByValue[T](l.head, value, l.Comparator, 0)
-	if node == nil {
-		return -1, nil //TODO: Make const
+	node := l.head
+	var index int
+	for node != nil {
+		if l.Comparator(value, node.value) == 0 {
+			return index, nil
+		}
+		node = node.next
+		index++
 	}
-	return index, nil
+	return -1, nil
 }
 
 /*
@@ -371,39 +322,93 @@ func (l *LinkedList[T]) ForEach(f func(T) T) {
 	}
 }
 
-func (l *LinkedList[T]) Map(f func(T) T) []T {
-	var arr []T
+func (l *LinkedList[T]) Map(f func(T) T) LinkedList[T] {
+	mapList := NewList[T](l.Comparator)
 	if f == nil {
-		return arr
+		return mapList
 	}
 	node := l.head
 	for node != nil {
-		arr = append(arr, f(node.value))
+		mapList.AddLast(f(node.value))
 		node = node.next
 	}
-	return arr
+	return mapList
 }
 
-func (l *LinkedList[T]) Filter(f func(T) bool) []T {
-	var arr []T
+func (l *LinkedList[T]) Filter(f func(T) bool) LinkedList[T] {
+	filtList := NewList[T](l.Comparator)
 	if f == nil {
-		return arr
+		return filtList
 	}
 	node := l.head
 	for node != nil {
 		if f(node.value) {
-			arr = append(arr, node.value)
+			filtList.AddLast(node.value)
 		}
 		node = node.next
 	}
-	return arr
+	return filtList
 }
 
-func ListFromArray[T any](arr []T, comparator func(T, T) int) *LinkedList[T] {
+func ListFromArray[T any](arr []T, comparator func(T, T) int) LinkedList[T] {
 	l := NewList[T](comparator)
-
-	for _, v := range arr {
-		l.AddLast(v)
+	if arr == nil {
+		return l
 	}
+
+	l.AddArray(arr)
 	return l
+}
+
+// Stack Functions
+
+func NewStack[T any]() Stack[T] {
+	return new(LinkedList[T])
+}
+
+/*
+Removes the value at the top of the stack and retrieves the value
+Equivalent to RemoveLast()
+*/
+func (l *LinkedList[T]) Pop() (T, error) {
+	return l.RemoveLast()
+}
+
+func (l *LinkedList[T]) Push(value T) {
+	l.AddLast(value)
+}
+
+func (l *LinkedList[T]) Top() (T, error) {
+	return l.GetLast()
+}
+
+//
+// Queue Functions
+//
+
+func NewQueue[T any]() Queue[T] {
+	return new(LinkedList[T])
+}
+
+/*
+Add value to the end of the queue
+Equivalent to AddLast()
+*/
+func (l *LinkedList[T]) Queue(value T) {
+	l.AddLast(value)
+}
+
+/*
+Removes the value at the begining of the queue and retrives its value
+Equivalent to RemoveFirst()
+*/
+func (l *LinkedList[T]) Dequeue() (T, error) {
+	return l.RemoveFirst()
+}
+
+/*
+Peek Retrieves the value of the next int the queue without deleting it
+*/
+func (l *LinkedList[T]) Peek() (T, error) {
+	return l.GetFirst()
 }
