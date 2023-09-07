@@ -25,7 +25,7 @@ type Stack[T any] interface {
 }
 
 type Queue[T any] interface {
-	Queue(T)
+	Enqueue(T)
 	Dequeue() (T, error)
 	Peek() (T, error)
 	IsEmpty() bool
@@ -394,7 +394,7 @@ func NewQueue[T any]() Queue[T] {
 Add value to the end of the queue
 Equivalent to AddLast()
 */
-func (l *LinkedList[T]) Queue(value T) {
+func (l *LinkedList[T]) Enqueue(value T) {
 	l.AddLast(value)
 }
 

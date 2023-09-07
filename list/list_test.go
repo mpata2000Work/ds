@@ -855,3 +855,187 @@ func TestSetListAtEnd(t *testing.T) {
 		t.Error("Size wasnt updated Expected 5 got ", l.size)
 	}
 }
+
+// Test Queue Interface
+
+func TestEnqueueInEmptyList(t *testing.T) {
+	q := NewQueue[int]()
+	q.Enqueue(0)
+	if q.Size() != 1 {
+		t.Error("Size wasnt updated Expected 1 got ", q.Size())
+	}
+	val, err := q.Peek()
+	if err != nil {
+		t.Error("Error was raised ", err)
+	}
+	if val != 0 {
+		t.Error("Value isnt correct Expected 0 got ", val)
+	}
+}
+
+func TestPeekInEmptyList(t *testing.T) {
+	q := NewQueue[int]()
+	_, err := q.Peek()
+	if err == nil {
+		t.Error("Error wasnt raised")
+	}
+}
+
+func TestEnqueueInList(t *testing.T) {
+	q := NewQueue[int]()
+	q.Enqueue(0)
+	q.Enqueue(1)
+	val, err := q.Peek()
+	if err != nil {
+		t.Error("Error was raised ", err)
+	}
+	if val != 0 {
+		t.Error("Value isnt correct Expected 0 got ", val)
+	}
+}
+
+func TestDequeueInEmptyList(t *testing.T) {
+	q := NewQueue[int]()
+	_, err := q.Dequeue()
+	if err == nil {
+		t.Error("Error wasnt raised")
+	}
+}
+
+func TestDequeueInList(t *testing.T) {
+	q := NewQueue[int]()
+	q.Enqueue(0)
+	q.Enqueue(1)
+	val, err := q.Dequeue()
+	if err != nil {
+		t.Error("Error was raised ", err)
+	}
+	if val != 0 {
+		t.Error("Value isnt correct Expected 0 got ", val)
+	}
+	val, err = q.Peek()
+	if err != nil {
+		t.Error("Error was raised ", err)
+	}
+	if val != 1 {
+		t.Error("Peek value isnt correct Expected 1 got ", val)
+	}
+	if q.Size() != 1 {
+		t.Error("Size wasnt updated Expected 1 got ", q.Size())
+	}
+}
+
+func TestDequeueInListToEmpty(t *testing.T) {
+	q := NewQueue[int]()
+	q.Enqueue(0)
+	q.Enqueue(1)
+	val, err := q.Dequeue()
+	if err != nil {
+		t.Error("Error was raised ", err)
+	}
+	if val != 0 {
+		t.Error("Value isnt correct Expected 0 got ", val)
+	}
+	val, err = q.Dequeue()
+	if err != nil {
+		t.Error("Error was raised ", err)
+	}
+	if val != 1 {
+		t.Error("Value isnt correct Expected 1 got ", val)
+	}
+	if q.Size() != 0 {
+		t.Error("Size wasnt updated Expected 0 got ", q.Size())
+	}
+}
+
+// Test Stack Interface
+
+func TestPushInEmptyList(t *testing.T) {
+	s := NewStack[int]()
+	s.Push(0)
+	if s.Size() != 1 {
+		t.Error("Size wasnt updated Expected 1 got ", s.Size())
+	}
+	val, err := s.Top()
+	if err != nil {
+		t.Error("Error was raised ", err)
+	}
+	if val != 0 {
+		t.Error("Value isnt correct Expected 0 got ", val)
+	}
+}
+
+func TestTopInEmptyList(t *testing.T) {
+	s := NewStack[int]()
+	_, err := s.Top()
+	if err == nil {
+		t.Error("Error wasnt raised")
+	}
+}
+
+func TestPushInList(t *testing.T) {
+	s := NewStack[int]()
+	s.Push(0)
+	s.Push(1)
+	val, err := s.Top()
+	if err != nil {
+		t.Error("Error was raised ", err)
+	}
+	if val != 1 {
+		t.Error("Value isnt correct Expected 1 got ", val)
+	}
+}
+
+func TestPopInEmptyList(t *testing.T) {
+	s := NewStack[int]()
+	_, err := s.Pop()
+	if err == nil {
+		t.Error("Error wasnt raised")
+	}
+}
+
+func TestPopInList(t *testing.T) {
+	s := NewStack[int]()
+	s.Push(0)
+	s.Push(1)
+	val, err := s.Pop()
+	if err != nil {
+		t.Error("Error was raised ", err)
+	}
+	if val != 1 {
+		t.Error("Value isnt correct Expected 1 got ", val)
+	}
+	val, err = s.Top()
+	if err != nil {
+		t.Error("Error was raised ", err)
+	}
+	if val != 0 {
+		t.Error("Top value isnt correct Expected 0 got ", val)
+	}
+	if s.Size() != 1 {
+		t.Error("Size wasnt updated Expected 1 got ", s.Size())
+	}
+}
+
+func TestPopInListToEmpty(t *testing.T) {
+	s := NewStack[int]()
+	s.Push(0)
+	s.Push(1)
+	val, err := s.Pop()
+	if err != nil {
+		t.Error("Error was raised ", err)
+	}
+	if val != 1 {
+		t.Error("Value isnt correct Expected 1 got ", val)
+	}
+	val, err = s.Pop()
+	if err != nil {
+		t.Error("Error was raised ", err)
+	}
+	if val != 0 {
+		t.Error("Value isnt correct Expected 0 got ", val)
+	}
+	if s.Size() != 0 {
+		t.Error("Size wasnt updated Expected 0 got ", s.Size())
+	}
+}
