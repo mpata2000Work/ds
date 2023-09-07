@@ -8,7 +8,7 @@ func comp(v1 int, v2 int) int {
 	return v1 - v2
 }
 
-func listOfFiveInts() LinkedList[int] {
+func listOfFiveInts() *LinkedList[int] {
 	l := NewLinkedList[int](comp)
 	l.AddLast(0)
 	l.AddLast(1)
@@ -632,7 +632,7 @@ func TestIndexOfWithoutComparator(t *testing.T) {
 
 func TestToArrayInEmptyList(t *testing.T) {
 	l := NewLinkedList[int](comp)
-	arr := l.ToArray()
+	arr := l.ToSlice()
 	if len(arr) != 0 {
 		t.Error("Array isnt correct Expected [] got ", arr)
 	}
@@ -640,7 +640,7 @@ func TestToArrayInEmptyList(t *testing.T) {
 
 func TestToArrayInList(t *testing.T) {
 	l := listOfFiveInts()
-	arr := l.ToArray()
+	arr := l.ToSlice()
 	if len(arr) != 5 {
 		t.Error("Array isnt correct Expected [0 1 2 3 4] got ", arr)
 	}
@@ -653,7 +653,7 @@ func TestToArrayInListAfterRemove(t *testing.T) {
 	l := listOfFiveInts()
 	l.RemoveFirst()
 	l.RemoveLast()
-	arr := l.ToArray()
+	arr := l.ToSlice()
 	if len(arr) != 3 {
 		t.Error("Array isnt correct Expected [1 2 3] got ", arr)
 	}
@@ -678,7 +678,7 @@ func TestForEachInEmptyList(t *testing.T) {
 func TestForEachInList(t *testing.T) {
 	l := listOfFiveInts()
 	l.ForEach(double)
-	arr := l.ToArray()
+	arr := l.ToSlice()
 	if len(arr) != 5 {
 		t.Error("Array isnt correct Expected [0 2 4 6 8] got ", arr)
 	}
@@ -690,7 +690,7 @@ func TestForEachInList(t *testing.T) {
 func TestForEachInListNilFunction(t *testing.T) {
 	l := listOfFiveInts()
 	l.ForEach(nil)
-	arr := l.ToArray()
+	arr := l.ToSlice()
 	if len(arr) != 5 {
 		t.Error("Array isnt correct Expected [0 1 2 3 4] got ", arr)
 	}
@@ -701,7 +701,7 @@ func TestForEachInListNilFunction(t *testing.T) {
 
 func TestListFromArray(t *testing.T) {
 	arr := []int{0, 1, 2, 3, 4}
-	l := LinkedListFromArray(arr, comp)
+	l := LinkedListFromArray(comp, arr...)
 	if l.head.value != 0 || l.tail.value != 4 || l.size != 5 {
 		t.Error("List isnt correct Expected [0 1 2 3 4] got ", l)
 	}
@@ -709,7 +709,7 @@ func TestListFromArray(t *testing.T) {
 
 func TestListFromArrayEmptyArray(t *testing.T) {
 	arr := []int{}
-	l := LinkedListFromArray(arr, comp)
+	l := LinkedListFromArray(comp, arr...)
 	if l.head != nil || l.tail != nil || l.size != 0 {
 		t.Error("List isnt correct Expected [] got ", l)
 	}
@@ -733,8 +733,8 @@ func TestMapInEmptyList(t *testing.T) {
 func TestMapInList(t *testing.T) {
 	l := listOfFiveInts()
 	m := l.Map(double)
-	arrList := l.ToArray()
-	arrMap := m.ToArray()
+	arrList := l.ToSlice()
+	arrMap := m.ToSlice()
 	if len(arrList) != 5 {
 		t.Error("Array isnt correct Expected [0 1 2 3 4] got ", arrList)
 	}
@@ -768,8 +768,8 @@ func TestFilterInEmptyList(t *testing.T) {
 func TestFilterInList(t *testing.T) {
 	l := listOfFiveInts()
 	m := l.Filter(func(v int) bool { return v%2 == 0 })
-	arrList := l.ToArray()
-	arrMap := m.ToArray()
+	arrList := l.ToSlice()
+	arrMap := m.ToSlice()
 	if len(arrList) != 5 {
 		t.Error("Array isnt correct Expected [0 1 2 3 4] got ", arrList)
 	}
@@ -898,19 +898,21 @@ func TestAddArrayWithEmptyArray(t *testing.T) {
 	}
 }
 
-func TestAddArrayAtStartInEmptyList(t *testing.T) {
+func TestAddAllAtStartInEmptyList(t *testing.T) {
 	l := NewLinkedList[int](comp)
-	l.AddArrayAt(0, []int{0, 1, 2, 3, 4})
+	arrIn := []int{0, 1, 2, 3, 4}
+	l.AddAllAt(0, arrIn...)
 	if l.head.value != 0 || l.tail.value != 4 || l.size != 5 {
 		t.Error("List isnt correct Expected [0 1 2 3 4] got ", l)
 	}
 }
 
-func TestAddArrayAtStartInList(t *testing.T) {
+func TestAddAllAtStartInList(t *testing.T) {
 	l := listOfFiveInts()
-	l.AddArrayAt(0, []int{5, 6, 7, 8, 9})
+	arrIn := []int{5, 6, 7, 8, 9}
+	l.AddAllAt(0, arrIn...)
 	if l.head.value != 5 || l.tail.value != 4 || l.size != 10 {
-		arr := l.ToArray()
+		arr := l.ToSlice()
 		t.Error("List isnt correct Expected [5 6 7 8 9 0 1 2 3 4] got ", arr)
 	}
 	val, err := l.Get(7)
@@ -922,26 +924,27 @@ func TestAddArrayAtStartInList(t *testing.T) {
 	}
 }
 
-func TestAddArrayAtWithEmptyArray(t *testing.T) {
+func TestAddAllAtWithEmptyArray(t *testing.T) {
 	l := listOfFiveInts()
-	err := l.AddArrayAt(0, []int{})
+	err := l.AddAllAt(0, []int{}...)
 	if err == nil {
 		t.Error("Error wasnt raised")
 	}
 
 }
 
-func TestAddArrayAtWithNilArray(t *testing.T) {
+func TestAddAllAtWithNilArray(t *testing.T) {
 	l := listOfFiveInts()
-	err := l.AddArrayAt(0, nil)
+	err := l.AddAllAt(0)
 	if err == nil {
 		t.Error("Error wasnt raised")
 	}
 }
 
-func TestAddArrayAtEndInList(t *testing.T) {
+func TestAddAllAtEndInList(t *testing.T) {
 	l := listOfFiveInts()
-	l.AddArrayAt(5, []int{5, 6, 7, 8, 9})
+	arrIn := []int{5, 6, 7, 8, 9}
+	l.AddAllAt(5, arrIn...)
 	if l.head.value != 0 || l.tail.value != 9 || l.size != 10 {
 		t.Error("List isnt correct Expected [0 1 2 3 4 5 6 7 8 9] got ", l)
 	}
@@ -954,10 +957,11 @@ func TestAddArrayAtEndInList(t *testing.T) {
 	}
 }
 
-func TestAddArrayAtMiddleInList(t *testing.T) {
+func TestAddAllAtMiddleInList(t *testing.T) {
 	l := listOfFiveInts()
-	l.AddArrayAt(2, []int{5, 6, 7, 8, 9})
-	arr := l.ToArray()
+	arrIn := []int{5, 6, 7, 8, 9}
+	l.AddAllAt(2, arrIn...)
+	arr := l.ToSlice()
 	expArr := []int{0, 1, 5, 6, 7, 8, 9, 2, 3, 4}
 
 	for i := 0; i < len(expArr); i++ {

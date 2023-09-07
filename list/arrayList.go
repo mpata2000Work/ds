@@ -9,10 +9,6 @@ type ArrayList[T any] struct {
 	Comparator func(T, T) int
 }
 
-func NewArrayList[T any](comp func(T, T) int) ArrayList[T] {
-	return ArrayList[T]{make([]T, 0), comp}
-}
-
 func (l *ArrayList[T]) Size() int {
 	return len(l.arr)
 }
@@ -31,7 +27,7 @@ func (l *ArrayList[T]) AddLast(value T) {
 
 func (l *ArrayList[T]) Add(index int, value T) error {
 	if index < 0 || index > l.Size() {
-		return errors.New("IndexOutOfBounds")
+		return ErrorOutOfBounds
 	}
 	if index == 0 {
 		l.AddFirst(value)
@@ -53,6 +49,36 @@ func (l *ArrayList[T]) AddAll(arr ...T) error {
 	}
 	l.arr = append(l.arr, arr...)
 	return nil
+}
+
+func (l *ArrayList[T]) AddAllAt(index int, arr ...T) error {
+	if index < 0 || index > l.Size() {
+		return ErrorOutOfBounds
+	}
+	if len(arr) == 0 {
+		return errors.New("NoElementsInArray")
+	}
+	tempArr := []T{}
+	tempArr = append(tempArr, l.arr[:index]...)
+	tempArr = append(tempArr, arr...)
+	tempArr = append(tempArr, l.arr[index:]...)
+	l.arr = tempArr
+	return nil
+}
+
+func (l *ArrayList[T]) GetFirst() (T, error) {
+	if l.IsEmpty() {
+		return *new(T), ErrorNoSuchElement
+	}
+	return l.arr[0], nil
+}
+
+func (l *ArrayList[T]) GetLast() (T, error) {
+	if l.IsEmpty() {
+		return *new(T), ErrorNoSuchElement
+	}
+
+	return l.arr[l.Size()-1], nil
 }
 
 func (l *ArrayList[T]) Get(index int) (T, error) {
@@ -103,28 +129,68 @@ func (l *ArrayList[T]) Remove(index int) (T, error) {
 	return value, nil
 }
 
-func (l *ArrayList[T]) Contains(value T) bool {
+func (l *ArrayList[T]) Contains(value T) (bool, error) {
+	if l.Comparator == nil {
+		return false, ErrorNoComparator
+	}
 	for _, v := range l.arr {
 		if l.Comparator(v, value) == 0 {
-			return true
+			return true, nil
 		}
 	}
-	return false
+	return false, nil
 }
 
-func (l *ArrayList[T]) IndexOf(value T) int {
+func (l *ArrayList[T]) IndexOf(value T) (int, error) {
+	if l.Comparator == nil {
+		return -1, ErrorNoComparator
+	}
 	for i, v := range l.arr {
 		if l.Comparator(v, value) == 0 {
-			return i
+			return i, nil
 		}
 	}
-	return -1
+	return -1, nil
 }
 
-func (l *ArrayList[T]) RemoveElement(value T) (T, error) {
-	index := l.IndexOf(value)
-	if index == -1 {
-		return *new(T), ErrorNoSuchElement
+func (l *ArrayList[T]) RemoveElement(value T) bool {
+	index, err := l.IndexOf(value)
+	if err != nil {
+		return false
 	}
-	return l.Remove(index)
+	_, err = l.Remove(index)
+	if err != nil {
+		return false
+	}
+	return true
+}
+
+func (l *ArrayList[T]) ForEach(f func(T) T) {
+	for i, v := range l.arr {
+		l.arr[i] = f(v)
+	}
+}
+
+func (l *ArrayList[T]) Map(f func(T) T) List[T] {
+	arrMap := make([]T, l.Size())
+	for i, v := range l.arr {
+		arrMap[i] = f(v)
+	}
+	return &ArrayList[T]{arrMap, l.Comparator}
+}
+
+func (l *ArrayList[T]) Filter(f func(T) bool) List[T] {
+	arrFilter := make([]T, 0, l.Size())
+	for _, v := range l.arr {
+		if f(v) {
+			arrFilter = append(arrFilter, v)
+		}
+	}
+	return &ArrayList[T]{arrFilter, l.Comparator}
+}
+
+func (l *ArrayList[T]) ToSlice() []T {
+	arr := make([]T, l.Size())
+	copy(arr, l.arr)
+	return arr
 }

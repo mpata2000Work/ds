@@ -2,7 +2,6 @@ package list
 
 import (
 	"errors"
-	"fmt"
 )
 
 type Node[T any] struct {
@@ -152,7 +151,7 @@ func (l *LinkedList[T]) AddAll(arr ...T) error {
 }
 
 // AddArrayAt Adds all values to the given index of the list. Returns error if index is out of bounds or if array is empty
-func (l *LinkedList[T]) AddArrayAt(index int, arr []T) error {
+func (l *LinkedList[T]) AddAllAt(index int, arr ...T) error {
 	if index > l.size || index < 0 {
 		return ErrorOutOfBounds
 	}
@@ -162,7 +161,7 @@ func (l *LinkedList[T]) AddArrayAt(index int, arr []T) error {
 	if index == l.size {
 		return l.AddAll(arr...)
 	}
-	tempList := LinkedListFromArray[T](arr, nil)
+	tempList := LinkedListFromArray[T](nil, arr...)
 	nodeAtPos, err := l.getNodeAt(index)
 	if err != nil {
 		return err
@@ -257,7 +256,7 @@ func (l *LinkedList[T]) getNodeByValue(value T) (int, *Node[T]) {
 }
 
 // RemoveElement Removes the first occurence of value in the list and returns true or false if it isnt in the list
-func (l *LinkedList[T]) RemoveValue(value T) bool {
+func (l *LinkedList[T]) RemoveElement(value T) bool {
 	if l.IsEmpty() {
 		return false
 	}
@@ -286,7 +285,7 @@ func (l *LinkedList[T]) Clear() {
 }
 
 // ToArray Returns an array of all the values in the list
-func (l *LinkedList[T]) ToArray() []T {
+func (l *LinkedList[T]) ToSlice() []T {
 	node := l.head
 	arr := make([]T, 0, l.size)
 	for node != nil {
@@ -294,18 +293,6 @@ func (l *LinkedList[T]) ToArray() []T {
 		node = node.next
 	}
 	return arr
-}
-
-// PrettyPrint Prints the list in a pretty format
-func (l *LinkedList[T]) PrettyPrint() {
-	node := l.head
-	fmt.Print(node.value)
-	for node.next != nil {
-		fmt.Print(" <-> ")
-		fmt.Print(node.next.value)
-		node = node.next
-	}
-	fmt.Print("\n")
 }
 
 // IndexOf Returns the index of the first occurence of value in the list or -1 if it isnt in the list.
@@ -322,10 +309,7 @@ func (l *LinkedList[T]) IndexOf(value T) (int, error) {
 // Returns error if comparator is nil
 func (l *LinkedList[T]) Contains(value T) (bool, error) {
 	index, err := l.IndexOf(value)
-	if err != nil {
-		return false, err
-	}
-	return index != -1, nil
+	return index != -1, err
 }
 
 // ForEach Applies the function f to each element of the lists
@@ -341,7 +325,7 @@ func (l *LinkedList[T]) ForEach(f func(T) T) {
 }
 
 // Map Applies the function f to each element of the lists and returns a new list with the results
-func (l *LinkedList[T]) Map(f func(T) T) LinkedList[T] {
+func (l *LinkedList[T]) Map(f func(T) T) List[T] {
 	mapList := NewLinkedList[T](l.Comparator)
 	if f == nil {
 		return mapList
@@ -355,7 +339,7 @@ func (l *LinkedList[T]) Map(f func(T) T) LinkedList[T] {
 }
 
 // Filter Applies the function f to each element of the lists and returns a new list with the elements that returned true
-func (l *LinkedList[T]) Filter(f func(T) bool) LinkedList[T] {
+func (l *LinkedList[T]) Filter(f func(T) bool) List[T] {
 	filtList := NewLinkedList[T](l.Comparator)
 	if f == nil {
 		return filtList
@@ -370,25 +354,9 @@ func (l *LinkedList[T]) Filter(f func(T) bool) LinkedList[T] {
 	return filtList
 }
 
-// LinkedListFromArray Creates a new LinkedList from the given array
-func LinkedListFromArray[T any](arr []T, comparator func(T, T) int) LinkedList[T] {
-	l := NewLinkedList[T](comparator)
-	if arr == nil {
-		return l
-	}
-
-	l.AddAll(arr...)
-	return l
-}
-
 //-----------------------------//
 //       Stack Functions       //
 //-----------------------------//
-
-// NewStack Creates a new Stack
-func NewStack[T any]() Stack[T] {
-	return new(LinkedList[T])
-}
 
 // Pop Removes the value at the top of the stack and retrieves the value. Returns error if stack is empty.
 // Equivalent to RemoveLast()
@@ -411,11 +379,6 @@ func (l *LinkedList[T]) Top() (T, error) {
 //-----------------------------//
 //       Queue Functions       //
 //-----------------------------//
-
-// NewQueue Creates a new Queue
-func NewQueue[T any]() Queue[T] {
-	return new(LinkedList[T])
-}
 
 // Enqueue Adds value to the end of the queue.
 // Equivalent to AddLast()
