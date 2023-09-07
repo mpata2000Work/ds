@@ -478,3 +478,115 @@ func TestRemoveInListToEmpty(t *testing.T) {
 	}
 
 }
+
+func TestClearEmptyList(t *testing.T) {
+	l := NewList[int](comp)
+	l.Clear()
+	if l.head != nil {
+		t.Error("Head wasnt set to nil")
+	}
+	if l.tail != nil {
+		t.Error("Tail wasnt set to nil")
+	}
+	if l.size != 0 {
+		t.Error("Size wasnt updated Expected 0 got ", l.size)
+	}
+}
+
+func TestClearList(t *testing.T) {
+	l := listOfFiveInts()
+	l.Clear()
+	if l.head != nil {
+		t.Error("Head wasnt set to nil")
+	}
+	if l.tail != nil {
+		t.Error("Tail wasnt set to nil")
+	}
+	if l.size != 0 {
+		t.Error("Size wasnt updated Expected 0 got ", l.size)
+	}
+}
+
+func TestContainsInEmptyList(t *testing.T) {
+	l := NewList[int](comp)
+	v, err := l.Contains(0)
+	if err != nil {
+		t.Error("Error was raised")
+	}
+	if v != false {
+		t.Error("Value isnt correct Expected false got ", v)
+	}
+}
+
+func TestContainsInList(t *testing.T) {
+	l := listOfFiveInts()
+	v, err := l.Contains(2)
+	if err != nil {
+		t.Error("Error was raised")
+	}
+	if v != true {
+		t.Error("Value isnt correct Expected true got ", v)
+	}
+}
+
+func TestContainsInListNotInList(t *testing.T) {
+	l := listOfFiveInts()
+	v, err := l.Contains(5)
+	if err != nil {
+		t.Error("Error was raised")
+	}
+	if v != false {
+		t.Error("Value isnt correct Expected false got ", v)
+	}
+}
+
+func TestContainsWithoutComparator(t *testing.T) {
+	l := NewList[int](nil)
+	l.AddLast(0)
+	_, err := l.Contains(0)
+	if err == nil {
+		t.Error("Error wasnt raised")
+	}
+}
+
+func TestIndexOfInEmptyList(t *testing.T) {
+	l := NewList[int](comp)
+	v, err := l.IndexOf(0)
+	if err != nil {
+		t.Error("Error was raised")
+	}
+	if v != -1 {
+		t.Error("Value isnt correct Expected -1 got ", v)
+	}
+}
+
+func TestIndexOfInList(t *testing.T) {
+	l := listOfFiveInts()
+	v, err := l.IndexOf(2)
+	if err != nil {
+		t.Error("Error was raised")
+	}
+	if v != 2 {
+		t.Error("Value isnt correct Expected 2 got ", v)
+	}
+}
+
+func TestIndexOfInListNotInList(t *testing.T) {
+	l := listOfFiveInts()
+	v, err := l.IndexOf(5)
+	if err != nil {
+		t.Error("Error was raised")
+	}
+	if v != -1 {
+		t.Error("Value isnt correct Expected -1 got ", v)
+	}
+}
+
+func TestIndexOfWithoutComparator(t *testing.T) {
+	l := NewList[int](nil)
+	l.AddLast(0)
+	_, err := l.IndexOf(0)
+	if err == nil {
+		t.Error("Error wasnt raised")
+	}
+}

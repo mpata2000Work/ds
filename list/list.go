@@ -287,22 +287,26 @@ func getNodeByValue[T any](node *Node[T], value T, cmp func(T, T) int, index int
 /*
 IndexOf Returns index of value or -1 if it isnt in the List
 */
-func (l *LinkedList[T]) IndexOf(value T) int {
+func (l *LinkedList[T]) IndexOf(value T) (int, error) {
 	if l.Comparator == nil {
-		return -1
+		return -1, errors.New("comparator is nil")
 	}
 	index, node := getNodeByValue[T](l.head, value, l.Comparator, 0)
 	if node == nil {
-		return -1 //TODO: Make const
+		return -1, nil //TODO: Make const
 	}
-	return index
+	return index, nil
 }
 
 /*
 Returns true if value is in List, false if it isnt
 */
-func (l *LinkedList[T]) Contains(value T) bool {
-	return l.IndexOf(value) >= 0
+func (l *LinkedList[T]) Contains(value T) (bool, error) {
+	index, err := l.IndexOf(value)
+	if err != nil {
+		return false, err
+	}
+	return index != -1, nil
 }
 
 func (l *LinkedList[T]) ForEach(f func(T) T) {
