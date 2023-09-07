@@ -80,8 +80,8 @@ func (l *LinkedList[T]) getNodeAt(index int) (*Node[T], error) {
 	return node, nil
 }
 
-func (l *LinkedList[T]) GetAt(i int) (T, error) {
-	node, err := l.getNodeAt(i)
+func (l *LinkedList[T]) GetAt(index int) (T, error) {
+	node, err := l.getNodeAt(index)
 	if err != nil {
 		return *new(T), err
 	}
@@ -113,7 +113,7 @@ func (l *LinkedList[T]) AddFirst(value T) {
 	}
 }
 
-func (l *LinkedList[T]) Add(value T, index int) error {
+func (l *LinkedList[T]) Add(index int, value T) error {
 	if index == 0 {
 		l.AddFirst(value)
 		return nil
