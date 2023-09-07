@@ -117,15 +117,15 @@ func (l *LinkedList[T]) AddLast(value T) {
 }
 
 func (l *LinkedList[T]) AddFirst(value T) {
-	new_node := Node[T]{nil, nil, value}
-
 	if l.IsEmpty() {
 		l.AddLast(value)
-	} else {
-		new_node.next = l.head
-		l.head = &new_node
-		l.size++
+		return
 	}
+	new_node := Node[T]{nil, nil, value}
+	new_node.next = l.head
+	l.head.previous = &new_node
+	l.head = &new_node
+	l.size++
 }
 
 func (l *LinkedList[T]) Add(index int, value T) error {
@@ -151,6 +151,7 @@ func (l *LinkedList[T]) Add(index int, value T) error {
 
 	previousNode.next = &newNode
 	nodeAtPosition.previous = &newNode
+	l.size++
 
 	return nil
 }
@@ -159,22 +160,24 @@ func (l *LinkedList[T]) RemoveLast() (T, error) {
 	if l.tail == nil {
 		return *new(T), errors.New("NoSuchElement")
 	}
+	value := l.tail.value
 	if l.size == 1 {
 		l.head = nil
+		l.tail = nil
+	} else {
+		l.tail = l.tail.previous
+		l.tail.next = nil
 	}
-	value := l.tail.value
-	l.tail = l.tail.previous
-	l.tail.next = nil
 	l.size--
 	return value, nil
 }
 
 func (l *LinkedList[T]) RemoveFirst() (T, error) {
-	if l.tail == nil {
+	if l.head == nil {
 		return *new(T), errors.New("NoSuchElement")
 	}
 	if l.size == 1 {
-		l.tail = nil
+		return l.RemoveLast()
 	}
 	value := l.head.value
 	l.head = l.head.next
@@ -184,6 +187,12 @@ func (l *LinkedList[T]) RemoveFirst() (T, error) {
 }
 
 func (l *LinkedList[T]) Remove(index int) (T, error) {
+	if index == l.size-1 {
+		return l.RemoveLast()
+	} else if index == 0 {
+		return l.RemoveFirst()
+	}
+
 	nodeToRemove, err := l.getNodeAt(index)
 	if err != nil {
 		return *new(T), err

@@ -79,11 +79,11 @@ func TestAddFirstInList(t *testing.T) {
 	if l.size != 2 {
 		t.Error("Size wasnt updated Expected 2 got ", l.size)
 	}
-	if l.head.value != 1 {
-		t.Error("Value isnt correct Expected 1 got ", l.head.value)
+	if l.head.value != 1 || l.head.next.value != 0 {
+		t.Error("Value isnt correct Expected 1 0 got ", l.head.value, l.head.next.value)
 	}
-	if l.tail.value != 0 {
-		t.Error("Value isnt correct Expected 0 got ", l.tail.value)
+	if l.tail.value != 0 || l.tail.previous.value != 1 {
+		t.Error("Value isnt correct Expected 0 1 got ", l.tail.value, l.tail.previous.value)
 	}
 }
 
@@ -159,8 +159,8 @@ func TestAddInListAtIndexCero(t *testing.T) {
 func TestAddInListAtLastIndex(t *testing.T) {
 	l := listOfFiveInts()
 	err := l.Add(5, 5)
-	if err == nil {
-		t.Error("Error wasnt raised")
+	if err != nil {
+		t.Error("Error was raised")
 	}
 	if l.head == nil {
 		t.Error("Head want initialize correctly")
@@ -181,24 +181,24 @@ func TestAddInListAtLastIndex(t *testing.T) {
 
 func TestAddInListAtIndex(t *testing.T) {
 	l := listOfFiveInts()
-	l.Add(2, 5)
-	if l.head == nil {
-		t.Error("Head want initialize correctly")
+	err := l.Add(4, 2)
+
+	if err != nil {
+		t.Error("Error was raised")
 	}
-	if l.tail == nil {
-		t.Error("Tail want initialize correctly")
+	if l.head == nil || l.tail == nil {
+		t.Error("Head or tail want initialize correctly")
 	}
 	if l.size != 6 {
 		t.Error("Size wasnt updated Expected 6 got ", l.size)
 	}
-	if l.head.value != 0 {
-		t.Error("Value isnt correct Expected 0 got ", l.head.value)
+	if l.head.value != 0 || l.tail.value != 4 {
+		t.Error("Value isnt correct for Head or Tail Expected 0 4 got ", l.head.value, l.tail.value)
 	}
-	if l.tail.value != 4 {
-		t.Error("Value isnt correct Expected 4 got ", l.tail.value)
-	}
-	if l.head.next.value != 1 || l.head.next.next.value != 5 || l.head.next.next.next.value != 2 {
-		t.Error("Value isnt correct Expected 1 5 2 got ", l.head.next.value, l.head.next.next.value, l.head.next.next.next.value)
+	nodeFromTail := l.tail.previous            // Index:5->4
+	nodeFromHead := l.head.next.next.next.next // Index:0->1->2->3->4
+	if nodeFromTail != nodeFromHead {
+		t.Error("Node from tail and head arent the same")
 	}
 }
 
@@ -273,4 +273,208 @@ func TestGetAtInListOutOfBoundsNegative(t *testing.T) {
 	if err == nil {
 		t.Error("Error wasnt raised")
 	}
+}
+
+func TestRemoveFirstInEmptyList(t *testing.T) {
+	l := NewList[int](comp)
+	_, err := l.RemoveFirst()
+	if err == nil {
+		t.Error("Error wasnt raised")
+	}
+}
+
+func TestRemoveFirstInList(t *testing.T) {
+	l := listOfFiveInts()
+	v, err := l.RemoveFirst()
+	if err != nil {
+		t.Error("Error was raised ", err)
+	}
+	if v != 0 {
+		t.Error("Value isnt correct Expected 0 got ", v)
+	}
+	if l.head.value != 1 {
+		t.Error("Value isnt correct Expected 1 got ", l.head.value)
+	}
+	if l.tail.value != 4 {
+		t.Error("Value isnt correct Expected 4 got ", l.tail.value)
+	}
+	if l.size != 4 {
+		t.Error("Size wasnt updated Expected 4 got ", l.size)
+	}
+}
+
+func TestRemoveLastInEmptyList(t *testing.T) {
+	l := NewList[int](comp)
+	_, err := l.RemoveLast()
+	if err == nil {
+		t.Error("Error wasnt raised")
+	}
+}
+
+func TestRemoveLastInList(t *testing.T) {
+	l := listOfFiveInts()
+	v, err := l.RemoveLast()
+	if err != nil {
+		t.Error("Error was raised ", err)
+	}
+	if v != 4 {
+		t.Error("Value isnt correct Expected 4 got ", v)
+	}
+	if l.head.value != 0 {
+		t.Error("Value isnt correct Expected 0 got ", l.head.value)
+	}
+	if l.tail.value != 3 {
+		t.Error("Value isnt correct Expected 3 got ", l.tail.value)
+	}
+	if l.size != 4 {
+		t.Error("Size wasnt updated Expected 4 got ", l.size)
+	}
+}
+
+func TestRemoveInEmptyList(t *testing.T) {
+	l := NewList[int](comp)
+	_, err := l.Remove(0)
+	if err == nil {
+		t.Error("Error wasnt raised")
+	}
+}
+
+func TestRemoveInList(t *testing.T) {
+	l := listOfFiveInts()
+	v, err := l.Remove(2)
+	if err != nil {
+		t.Error("Error was raised ", err)
+	}
+	if v != 2 {
+		t.Error("Value isnt correct Expected 2 got ", v)
+	}
+	if l.head.value != 0 {
+		t.Error("Value isnt correct Expected 0 got ", l.head.value)
+	}
+	if l.tail.value != 4 {
+		t.Error("Value isnt correct Expected 4 got ", l.tail.value)
+	}
+	if l.size != 4 {
+		t.Error("Size wasnt updated Expected 4 got ", l.size)
+	}
+}
+
+func TestRemoveInListOutOfBounds(t *testing.T) {
+	l := listOfFiveInts()
+	_, err := l.Remove(5)
+	if err == nil {
+		t.Error("Error wasnt raised")
+	}
+}
+
+func TestRemoveInListOutOfBoundsNegative(t *testing.T) {
+	l := listOfFiveInts()
+	_, err := l.Remove(-1)
+	if err == nil {
+		t.Error("Error wasnt raised")
+	}
+}
+
+func TestRemoveInListAtStart(t *testing.T) {
+	l := listOfFiveInts()
+	v, err := l.Remove(0)
+	if err != nil {
+		t.Error("Error was raised ", err)
+	}
+	if v != 0 {
+		t.Error("Value isnt correct Expected 0 got ", v)
+	}
+	if l.head.value != 1 {
+		t.Error("Value isnt correct Expected 1 got ", l.head.value)
+	}
+	if l.tail.value != 4 {
+		t.Error("Value isnt correct Expected 4 got ", l.tail.value)
+	}
+	if l.size != 4 {
+		t.Error("Size wasnt updated Expected 4 got ", l.size)
+	}
+}
+
+func TestRemoveInListAtEnd(t *testing.T) {
+	l := listOfFiveInts()
+	v, err := l.Remove(4)
+	if err != nil {
+		t.Error("Error was raised ", err)
+	}
+	if v != 4 {
+		t.Error("Value isnt correct Expected 4 got ", v)
+	}
+	if l.head.value != 0 {
+		t.Error("Value isnt correct Expected 0 got ", l.head.value)
+	}
+	if l.tail.value != 3 {
+		t.Error("Value isnt correct Expected 3 got ", l.tail.value)
+	}
+	if l.size != 4 {
+		t.Error("Size wasnt updated Expected 4 got ", l.size)
+	}
+}
+
+func TestRemoveFirstInListToEmpty(t *testing.T) {
+	l := listOfFiveInts()
+	v1, _ := l.RemoveFirst()
+	v2, _ := l.RemoveFirst()
+	v3, _ := l.RemoveFirst()
+	v4, _ := l.RemoveFirst()
+	v5, _ := l.RemoveFirst()
+	if v1 != 0 || v2 != 1 || v3 != 2 || v4 != 3 || v5 != 4 {
+		t.Error("Values arent correct Expected 0 1 2 3 4 got ", v1, v2, v3, v4, v5)
+	}
+	if l.head != nil {
+		t.Error("Head wasnt set to nil")
+	}
+	if l.tail != nil {
+		t.Error("Tail wasnt set to nil")
+	}
+	if l.size != 0 {
+		t.Error("Size wasnt updated Expected 0 got ", l.size)
+	}
+}
+
+func TestRemoveLastInListToEmpty(t *testing.T) {
+	l := listOfFiveInts()
+	v1, _ := l.RemoveLast()
+	v2, _ := l.RemoveLast()
+	v3, _ := l.RemoveLast()
+	v4, _ := l.RemoveLast()
+	v5, _ := l.RemoveLast()
+	if v1 != 4 || v2 != 3 || v3 != 2 || v4 != 1 || v5 != 0 {
+		t.Error("Values arent correct Expected 4 3 2 1 0 got ", v1, v2, v3, v4, v5)
+	}
+	if l.head != nil {
+		t.Error("Head wasnt set to nil")
+	}
+	if l.tail != nil {
+		t.Error("Tail wasnt set to nil")
+	}
+	if l.size != 0 {
+		t.Error("Size wasnt updated Expected 0 got ", l.size)
+	}
+}
+
+func TestRemoveInListToEmpty(t *testing.T) {
+	l := listOfFiveInts()
+	v1, err1 := l.Remove(4)
+	v2, err2 := l.Remove(2)
+	v3, err3 := l.Remove(2)
+	v4, err4 := l.Remove(0)
+	v5, err5 := l.Remove(0)
+	if err1 != nil || err2 != nil || err3 != nil || err4 != nil || err5 != nil {
+		t.Error("Error was raised", err1, err2, err3, err4, err5)
+	}
+	if v1 != 4 || v2 != 2 || v3 != 3 || v4 != 0 || v5 != 1 {
+		t.Error("Values arent correct Expected 4 2 3 0 1 got ", v1, v2, v3, v4, v5)
+	}
+	if l.head != nil {
+		t.Error("Head wasnt set to nil")
+	}
+	if l.tail != nil {
+		t.Error("Tail wasnt set to nil")
+	}
+
 }
