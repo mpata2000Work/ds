@@ -9,7 +9,7 @@ func comp(v1 int, v2 int) int {
 }
 
 func listOfFiveInts() LinkedList[int] {
-	l := NewList[int](comp)
+	l := NewLinkedList[int](comp)
 	l.AddLast(0)
 	l.AddLast(1)
 	l.AddLast(2)
@@ -21,28 +21,28 @@ func listOfFiveInts() LinkedList[int] {
 //TODO Improve tests
 
 func TestCreateEmptyListWithoutComparator(t *testing.T) {
-	l := NewList[int](nil)
+	l := NewLinkedList[int](nil)
 	if l.head != nil || l.tail != nil || l.size != 0 || l.Comparator != nil {
 		t.Error("List wasnt correctly initialize ", l)
 	}
 }
 
 func TestCreateEmptyListWithComparator(t *testing.T) {
-	l := NewList[int](comp)
+	l := NewLinkedList[int](comp)
 	if l.head != nil || l.tail != nil || l.size != 0 || l.Comparator == nil {
 		t.Error("List wasnt correctly initialize ", l)
 	}
 }
 
 func TestIsEmptyInEmptyList(t *testing.T) {
-	l := NewList[int](comp)
+	l := NewLinkedList[int](comp)
 	if !l.IsEmpty() {
 		t.Error("List isnt empty")
 	}
 }
 
 func TestAddFirstInEmptyList(t *testing.T) {
-	l := NewList[int](comp)
+	l := NewLinkedList[int](comp)
 	l.AddFirst(0)
 	if l.head == nil {
 		t.Error("Head want initialize correctly")
@@ -59,7 +59,7 @@ func TestAddFirstInEmptyList(t *testing.T) {
 }
 
 func TestAddLastInEmptyList(t *testing.T) {
-	l := NewList[int](comp)
+	l := NewLinkedList[int](comp)
 	l.AddLast(0)
 	if l.head == nil {
 		t.Error("Head want initialize correctly")
@@ -83,7 +83,7 @@ func TestIsEmptyInList(t *testing.T) {
 }
 
 func TestSizeInEmptyList(t *testing.T) {
-	l := NewList[int](comp)
+	l := NewLinkedList[int](comp)
 	if l.Size() != 0 {
 		t.Error("Size isnt correct Expected 0 got ", l.Size())
 	}
@@ -97,7 +97,7 @@ func TestSizeInList(t *testing.T) {
 }
 
 func TestAddFirstInList(t *testing.T) {
-	l := NewList[int](comp)
+	l := NewLinkedList[int](comp)
 	l.AddFirst(0)
 	l.AddFirst(1)
 	if l.head == nil {
@@ -118,7 +118,7 @@ func TestAddFirstInList(t *testing.T) {
 }
 
 func TestAddLastInList(t *testing.T) {
-	l := NewList[int](comp)
+	l := NewLinkedList[int](comp)
 	l.AddLast(0)
 	l.AddLast(1)
 	if l.head == nil {
@@ -139,7 +139,7 @@ func TestAddLastInList(t *testing.T) {
 }
 
 func TestAddInListEmptyListAtIndexCero(t *testing.T) {
-	l := NewList[int](comp)
+	l := NewLinkedList[int](comp)
 	l.Add(0, 0)
 	if l.head == nil {
 		t.Error("Head want initialize correctly")
@@ -159,7 +159,7 @@ func TestAddInListEmptyListAtIndexCero(t *testing.T) {
 }
 
 func TestAddInListEmptyListAtIndexOut(t *testing.T) {
-	l := NewList[int](comp)
+	l := NewLinkedList[int](comp)
 	err := l.Add(1, 0)
 	if err == nil {
 		t.Error("Error wasnt raised")
@@ -233,7 +233,7 @@ func TestAddInListAtIndex(t *testing.T) {
 }
 
 func TestGetFirstInEmptyList(t *testing.T) {
-	l := NewList[int](comp)
+	l := NewLinkedList[int](comp)
 	_, err := l.GetFirst()
 	if err == nil {
 		t.Error("Error wasnt raised")
@@ -252,7 +252,7 @@ func TestGetFirstInList(t *testing.T) {
 }
 
 func TestGetLastInEmptyList(t *testing.T) {
-	l := NewList[int](comp)
+	l := NewLinkedList[int](comp)
 	_, err := l.GetLast()
 	if err == nil {
 		t.Error("Error wasnt raised")
@@ -271,7 +271,7 @@ func TestGetLastInList(t *testing.T) {
 }
 
 func TestGetAtInEmptyList(t *testing.T) {
-	l := NewList[int](comp)
+	l := NewLinkedList[int](comp)
 	_, err := l.Get(0)
 	if err == nil {
 		t.Error("Error wasnt raised")
@@ -317,7 +317,7 @@ func TestGetAtInListOutOfBoundsNegative(t *testing.T) {
 }
 
 func TestRemoveFirstInEmptyList(t *testing.T) {
-	l := NewList[int](comp)
+	l := NewLinkedList[int](comp)
 	_, err := l.RemoveFirst()
 	if err == nil {
 		t.Error("Error wasnt raised")
@@ -345,7 +345,7 @@ func TestRemoveFirstInList(t *testing.T) {
 }
 
 func TestRemoveLastInEmptyList(t *testing.T) {
-	l := NewList[int](comp)
+	l := NewLinkedList[int](comp)
 	_, err := l.RemoveLast()
 	if err == nil {
 		t.Error("Error wasnt raised")
@@ -373,7 +373,7 @@ func TestRemoveLastInList(t *testing.T) {
 }
 
 func TestRemoveInEmptyList(t *testing.T) {
-	l := NewList[int](comp)
+	l := NewLinkedList[int](comp)
 	_, err := l.Remove(0)
 	if err == nil {
 		t.Error("Error wasnt raised")
@@ -521,7 +521,7 @@ func TestRemoveInListToEmpty(t *testing.T) {
 }
 
 func TestClearEmptyList(t *testing.T) {
-	l := NewList[int](comp)
+	l := NewLinkedList[int](comp)
 	l.Clear()
 	if l.head != nil {
 		t.Error("Head wasnt set to nil")
@@ -549,7 +549,7 @@ func TestClearList(t *testing.T) {
 }
 
 func TestContainsInEmptyList(t *testing.T) {
-	l := NewList[int](comp)
+	l := NewLinkedList[int](comp)
 	v, err := l.Contains(0)
 	if err != nil {
 		t.Error("Error was raised")
@@ -582,7 +582,7 @@ func TestContainsInListNotInList(t *testing.T) {
 }
 
 func TestContainsWithoutComparator(t *testing.T) {
-	l := NewList[int](nil)
+	l := NewLinkedList[int](nil)
 	l.AddLast(0)
 	_, err := l.Contains(0)
 	if err == nil {
@@ -591,7 +591,7 @@ func TestContainsWithoutComparator(t *testing.T) {
 }
 
 func TestIndexOfInEmptyList(t *testing.T) {
-	l := NewList[int](comp)
+	l := NewLinkedList[int](comp)
 	v, err := l.IndexOf(0)
 	if err != nil {
 		t.Error("Error was raised")
@@ -624,7 +624,7 @@ func TestIndexOfInListNotInList(t *testing.T) {
 }
 
 func TestIndexOfWithoutComparator(t *testing.T) {
-	l := NewList[int](nil)
+	l := NewLinkedList[int](nil)
 	l.AddLast(0)
 	_, err := l.IndexOf(0)
 	if err == nil {
@@ -633,7 +633,7 @@ func TestIndexOfWithoutComparator(t *testing.T) {
 }
 
 func TestToArrayInEmptyList(t *testing.T) {
-	l := NewList[int](comp)
+	l := NewLinkedList[int](comp)
 	arr := l.ToArray()
 	if len(arr) != 0 {
 		t.Error("Array isnt correct Expected [] got ", arr)
@@ -669,7 +669,7 @@ func double(v int) int {
 }
 
 func TestForEachInEmptyList(t *testing.T) {
-	l := NewList[int](comp)
+	l := NewLinkedList[int](comp)
 	l.ForEach(double)
 	//No error
 	if !l.IsEmpty() {
@@ -725,7 +725,7 @@ func TestListFromArrayNilArray(t *testing.T) {
 }
 
 func TestMapInEmptyList(t *testing.T) {
-	l := NewList[int](comp)
+	l := NewLinkedList[int](comp)
 	m := l.Map(double)
 	if !m.IsEmpty() {
 		t.Error("List isnt empty")
@@ -760,7 +760,7 @@ func TestMapInListNilFunction(t *testing.T) {
 }
 
 func TestFilterInEmptyList(t *testing.T) {
-	l := NewList[int](comp)
+	l := NewLinkedList[int](comp)
 	m := l.Filter(func(v int) bool { return v%2 == 0 })
 	if !m.IsEmpty() {
 		t.Error("List isnt empty")
@@ -795,7 +795,7 @@ func TestFilterInListNilFunction(t *testing.T) {
 }
 
 func TestSetEmptyList(t *testing.T) {
-	l := NewList[int](comp)
+	l := NewLinkedList[int](comp)
 	err := l.Set(0, 0)
 	if err == nil {
 		t.Error("Error wasnt raised")
@@ -870,7 +870,7 @@ func TestSetListAtEnd(t *testing.T) {
 }
 
 func TestAddArrayInEmptyList(t *testing.T) {
-	l := NewList[int](comp)
+	l := NewLinkedList[int](comp)
 	l.AddAll([]int{0, 1, 2, 3, 4}...)
 	if l.head.value != 0 || l.tail.value != 4 || l.size != 5 {
 		t.Error("List isnt correct Expected [0 1 2 3 4] got ", l)
@@ -901,7 +901,7 @@ func TestAddArrayWithEmptyArray(t *testing.T) {
 }
 
 func TestAddArrayAtStartInEmptyList(t *testing.T) {
-	l := NewList[int](comp)
+	l := NewLinkedList[int](comp)
 	l.AddArrayAt(0, []int{0, 1, 2, 3, 4})
 	if l.head.value != 0 || l.tail.value != 4 || l.size != 5 {
 		t.Error("List isnt correct Expected [0 1 2 3 4] got ", l)

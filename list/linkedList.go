@@ -5,6 +5,12 @@ import (
 	"fmt"
 )
 
+var (
+	ErrorNoSuchElement     = errors.New("NoSuchElement")
+	ErrorOutOfBounds       = errors.New("OutOfBounds")
+	ErrorNoElementsInArray = errors.New("NoElementsInArray")
+)
+
 type Node[T any] struct {
 	next, previous *Node[T]
 	value          T
@@ -14,31 +20,6 @@ type LinkedList[T any] struct {
 	head, tail *Node[T]
 	size       int
 	Comparator func(T, T) int
-}
-
-type Stack[T any] interface {
-	Pop() (T, error)
-	Push(T)
-	Top() (T, error)
-	IsEmpty() bool
-	Size() int
-}
-
-type Queue[T any] interface {
-	Enqueue(T)
-	Dequeue() (T, error)
-	Peek() (T, error)
-	IsEmpty() bool
-	Size() int
-}
-
-// NewList Creates a new LinkedList
-// Comparator function should return
-// 0 if ir is equal
-// 0>(Greater than 0) if it v1 is greater than v2
-// 0<(Less than 0) if it v1 is lower than v2
-func NewList[T any](comparator func(T, T) int) LinkedList[T] {
-	return LinkedList[T]{nil, nil, 0, comparator}
 }
 
 // IsEmpty Returns true if the list is empty
@@ -54,7 +35,7 @@ func (l *LinkedList[T]) Size() int {
 // GetFirst Returns the first element of the list
 func (l *LinkedList[T]) GetFirst() (T, error) {
 	if l.IsEmpty() {
-		return *new(T), errors.New("NoSuchElement")
+		return *new(T), ErrorNoSuchElement
 	}
 	return l.head.value, nil
 }
@@ -62,7 +43,7 @@ func (l *LinkedList[T]) GetFirst() (T, error) {
 // GetLast Returns the last element of the list
 func (l *LinkedList[T]) GetLast() (T, error) {
 	if l.IsEmpty() {
-		return *new(T), errors.New("NoSuchElement")
+		return *new(T), ErrorNoSuchElement
 	}
 	return l.tail.value, nil
 }
@@ -70,10 +51,10 @@ func (l *LinkedList[T]) GetLast() (T, error) {
 // getNodeAt Returns the node at the given index from the closest end of the list
 func (l *LinkedList[T]) getNodeAt(index int) (*Node[T], error) {
 	if l.IsEmpty() {
-		return nil, errors.New("NoSuchElement")
+		return nil, ErrorNoSuchElement
 	}
 	if index >= l.size || index < 0 {
-		return nil, errors.New("OutOfBounds")
+		return nil, errors
 	}
 	var node *Node[T]
 	var moveForward bool
@@ -167,7 +148,7 @@ func (l *LinkedList[T]) Add(index int, value T) error {
 // AddAll Adds all values to the end of the list. Returns error if array is empty
 func (l *LinkedList[T]) AddAll(arr ...T) error {
 	if len(arr) == 0 {
-		return errors.New("NoElementsInArray")
+		return ErrorNoElementsInArray
 	}
 
 	for _, v := range arr {
@@ -179,10 +160,10 @@ func (l *LinkedList[T]) AddAll(arr ...T) error {
 // AddArrayAt Adds all values to the given index of the list. Returns error if index is out of bounds or if array is empty
 func (l *LinkedList[T]) AddArrayAt(index int, arr []T) error {
 	if index > l.size || index < 0 {
-		return errors.New("OutOfBounds")
+		return errors
 	}
 	if len(arr) == 0 {
-		return errors.New("NoElementsInArray")
+		return ErrorNoElementsInArray
 	}
 	if index == l.size {
 		return l.AddAll(arr...)
@@ -220,7 +201,7 @@ func (l *LinkedList[T]) Set(index int, value T) error {
 // RemoveLast Removes the last element of the list and returns its value or error if list is empty
 func (l *LinkedList[T]) RemoveLast() (T, error) {
 	if l.IsEmpty() {
-		return *new(T), errors.New("NoSuchElement")
+		return *new(T), ErrorNoSuchElement
 	}
 	value := l.tail.value
 	if l.size == 1 {
@@ -237,7 +218,7 @@ func (l *LinkedList[T]) RemoveLast() (T, error) {
 // RemoveFirst Removes the first element of the list and returns its value or error if list is empty
 func (l *LinkedList[T]) RemoveFirst() (T, error) {
 	if l.IsEmpty() {
-		return *new(T), errors.New("NoSuchElement")
+		return *new(T), ErrorNoSuchElement
 	}
 	if l.size == 1 {
 		return l.RemoveLast()
@@ -267,11 +248,39 @@ func (l *LinkedList[T]) Remove(index int) (T, error) {
 	return nodeToRemove.value, nil
 }
 
+// getNodeByValue Returns the index and node of the first occurence of value in the list or -1 and nil if it isnt in the list
+func (l *LinkedList[T]) getNodeByValue(value T) (int, *Node[T]) {
+	node := l.head
+	index := 0
+	for node != nil {
+		if l.Comparator(node.value, value) == 0 {
+			return index, node
+		}
+		node = node.next
+		index++
+	}
+	return -1, nil
+}
+
+// RemoveElement Removes the first occurence of value in the list and returns true or false if it isnt in the list
 func (l *LinkedList[T]) RemoveValue(value T) bool {
 	if l.IsEmpty() {
 		return false
 	}
-	//node := l.head
+	i, node := l.getNodeByValue(value)
+	switch i {
+	case -1:
+		return false
+	case 0:
+		l.RemoveFirst()
+		return true
+	case l.size - 1:
+		l.RemoveLast()
+		return true
+	}
+	node.previous.next = node.next
+	node.next.previous = node.previous
+	l.size--
 	return true
 }
 
@@ -311,16 +320,8 @@ func (l *LinkedList[T]) IndexOf(value T) (int, error) {
 	if l.Comparator == nil {
 		return -1, errors.New("comparator is nil")
 	}
-	node := l.head
-	var index int
-	for node != nil {
-		if l.Comparator(value, node.value) == 0 {
-			return index, nil
-		}
-		node = node.next
-		index++
-	}
-	return -1, nil
+	i, _ := l.getNodeByValue(value)
+	return i, nil
 }
 
 // Contains Returns true if the list contains the given value.
@@ -347,7 +348,7 @@ func (l *LinkedList[T]) ForEach(f func(T) T) {
 
 // Map Applies the function f to each element of the lists and returns a new list with the results
 func (l *LinkedList[T]) Map(f func(T) T) LinkedList[T] {
-	mapList := NewList[T](l.Comparator)
+	mapList := NewLinkedList[T](l.Comparator)
 	if f == nil {
 		return mapList
 	}
@@ -361,7 +362,7 @@ func (l *LinkedList[T]) Map(f func(T) T) LinkedList[T] {
 
 // Filter Applies the function f to each element of the lists and returns a new list with the elements that returned true
 func (l *LinkedList[T]) Filter(f func(T) bool) LinkedList[T] {
-	filtList := NewList[T](l.Comparator)
+	filtList := NewLinkedList[T](l.Comparator)
 	if f == nil {
 		return filtList
 	}
@@ -377,7 +378,7 @@ func (l *LinkedList[T]) Filter(f func(T) bool) LinkedList[T] {
 
 // LinkedListFromArray Creates a new LinkedList from the given array
 func LinkedListFromArray[T any](arr []T, comparator func(T, T) int) LinkedList[T] {
-	l := NewList[T](comparator)
+	l := NewLinkedList[T](comparator)
 	if arr == nil {
 		return l
 	}
@@ -396,21 +397,21 @@ func NewStack[T any]() Stack[T] {
 }
 
 // Pop Removes the value at the top of the stack and retrieves the value. Returns error if stack is empty.
-// Equivalent to RemoveFirst()
+// Equivalent to RemoveLast()
 func (l *LinkedList[T]) Pop() (T, error) {
-	return l.RemoveFirst()
+	return l.RemoveLast()
 }
 
 // Push Adds value to the top of the stack.
-// Equivalent to AddFirst()
+// Equivalent to AddLast()
 func (l *LinkedList[T]) Push(value T) {
-	l.AddFirst(value)
+	l.AddLast(value)
 }
 
 // Top Returns the value at the top of the stack without removing it. Returns error if stack is empty.
-// Equivalent to GetFirst()
+// Equivalent to GetLast()
 func (l *LinkedList[T]) Top() (T, error) {
-	return l.GetFirst()
+	return l.GetLast()
 }
 
 //-----------------------------//

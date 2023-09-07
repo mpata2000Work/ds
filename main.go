@@ -11,7 +11,7 @@ func comp(v1 int, v2 int) int {
 
 func main() {
 	fmt.Println("hi")
-	hi := list.NewList[int](comp)
+	hi := list.NewLinkedList[int](comp)
 	hi.AddLast(0)
 	hi.AddLast(1)
 	hi.AddLast(2)
