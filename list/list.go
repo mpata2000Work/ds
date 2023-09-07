@@ -16,6 +16,18 @@ type LinkedList[T any] struct {
 	Comparator func(T, T) int
 }
 
+type Stack[T any] interface {
+	Pop() (T, error)
+	Push(T)
+	Top() (T, error)
+}
+
+type Queue[T any] interface {
+	Queue(T)
+	Dequeue() (T, error)
+	Peek() (T, error)
+}
+
 /*
 NewList Creates a new List
 Comparator function should return
@@ -53,6 +65,9 @@ func (l *LinkedList[T]) GetLast() (T, error) {
 }
 
 func (l *LinkedList[T]) getNodeAt(index int) (*Node[T], error) {
+	if l.IsEmpty() {
+		return nil, errors.New("NoSuchElement")
+	}
 	if index >= l.size || index < 0 {
 		return nil, errors.New("OutOfBounds")
 	}
@@ -140,7 +155,10 @@ func (l *LinkedList[T]) Add(index int, value T) error {
 	return nil
 }
 
-func (l *LinkedList[T]) RemoveLast() T {
+func (l *LinkedList[T]) RemoveLast() (T, error) {
+	if l.tail == nil {
+		return *new(T), errors.New("NoSuchElement")
+	}
 	if l.size == 1 {
 		l.head = nil
 	}
@@ -148,10 +166,13 @@ func (l *LinkedList[T]) RemoveLast() T {
 	l.tail = l.tail.previous
 	l.tail.next = nil
 	l.size--
-	return value
+	return value, nil
 }
 
-func (l *LinkedList[T]) RemoveFirst() T {
+func (l *LinkedList[T]) RemoveFirst() (T, error) {
+	if l.tail == nil {
+		return *new(T), errors.New("NoSuchElement")
+	}
 	if l.size == 1 {
 		l.tail = nil
 	}
@@ -159,7 +180,7 @@ func (l *LinkedList[T]) RemoveFirst() T {
 	l.head = l.head.next
 	l.head.previous = nil
 	l.size--
-	return value
+	return value, nil
 }
 
 func (l *LinkedList[T]) Remove(index int) (T, error) {
@@ -206,7 +227,7 @@ func (l *LinkedList[T]) PrettyPrint() {
 Removes the value at the top of the stack and retrieves the value
 Equivalent to RemoveLast()
 */
-func (l *LinkedList[T]) Pop() T {
+func (l *LinkedList[T]) Pop() (T, error) {
 	return l.RemoveLast()
 }
 
@@ -233,7 +254,7 @@ func (l *LinkedList[T]) Queue(value T) {
 Removes the value at the begining of the queue and retrives its value
 Equivalent to RemoveFirst()
 */
-func (l *LinkedList[T]) Dequeue() T {
+func (l *LinkedList[T]) Dequeue() (T, error) {
 	return l.RemoveFirst()
 }
 
