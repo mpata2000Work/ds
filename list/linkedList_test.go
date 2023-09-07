@@ -962,7 +962,7 @@ func TestSetListAtEnd(t *testing.T) {
 	}
 }
 
-func TestAddArrayInEmptyList(t *testing.T) {
+func TestAddAllInEmptyList(t *testing.T) {
 	l := NewLinkedList[int](comp)
 	arr := []int{0, 1, 2}
 	expectedSize := 3
@@ -978,7 +978,7 @@ func TestAddArrayInEmptyList(t *testing.T) {
 	}
 }
 
-func TestAddArrayInList(t *testing.T) {
+func TestAddAllInList(t *testing.T) {
 	arr := []int{0, 1, 2}
 	l := LinkedListFromArray(comp, arr...)
 	arrIn := []int{3, 4}
@@ -1006,7 +1006,7 @@ func TestAddArrayInList(t *testing.T) {
 	}
 }
 
-func TestAddArrayWithEmptyArray(t *testing.T) {
+func TestAddAllWithEmptyArray(t *testing.T) {
 	arr := []int{0, 1, 2}
 	l := LinkedListFromArray(comp, arr...)
 	l.AddAll([]int{}...)
@@ -1146,6 +1146,47 @@ func TestAddAllAtMiddleInList(t *testing.T) {
 		if arrOut[i] != expectedArr[i] {
 			t.Errorf("Array isnt correct Expected %v got %v at pos %v", expectedArr, arrOut, i)
 		}
+	}
+}
+
+func TestAddAllAtOutOfBounds(t *testing.T) {
+	l := LinkedListFromArray(comp, []int{0, 1, 2}...)
+	err1 := l.AddAllAt(l.size+1, 3, 4)
+	err2 := l.AddAllAt(-1, 3, 4)
+	if err1 == nil || err2 == nil {
+		t.Error("Error wasnt raised")
+	}
+}
+
+func TestRemoveElementInEmptyList(t *testing.T) {
+	l := NewLinkedList[int](comp)
+	v := l.RemoveElement(0)
+	if v {
+		t.Error("Value was found when not in list")
+	}
+}
+
+func TestRemoveElementInList(t *testing.T) {
+	arr := []int{0, 1, 2}
+	l := LinkedListFromArray(comp, arr...)
+	v := l.RemoveElement(1)
+	if !v {
+		t.Error("Value wasnt removed when in list")
+	}
+	if l.head.value != 0 || l.tail.value != 2 || l.size != 2 {
+		t.Errorf("Other values were changed. Expected for head 0 got %d, for tail 2 got %d and for size 2 got %d", l.head.value, l.tail.value, l.size)
+	}
+	if l.head.next.value != 2 {
+		t.Errorf("Value isnt correct Expected 2 got %d", l.head.next.value)
+	}
+}
+
+func TestRemoveElementNotInLinkedList(t *testing.T) {
+	arr := []int{0, 1, 2}
+	l := LinkedListFromArray(comp, arr...)
+	v := l.RemoveElement(5)
+	if v {
+		t.Error("Value was found when not in list")
 	}
 }
 

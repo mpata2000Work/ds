@@ -863,5 +863,39 @@ func TestAddAllAtMiddleInArrayList(t *testing.T) {
 			t.Errorf("Expected element at index %d to be %d", i, expectedArr[i])
 		}
 	}
+}
 
+func TestRemoveElementInEmptyArrayList(t *testing.T) {
+	l := NewArrayList[int](nil)
+	v := l.RemoveElement(0)
+	if v {
+		t.Error("Expected value to be false")
+	}
+}
+
+func TestRemoveElementInArrayList(t *testing.T) {
+	arr := []int{0, 1, 2}
+	l := ArrayListFromArray(compArrayListTest, arr...)
+	expectedArr := []int{0, 2}
+	v := l.RemoveElement(1)
+	if !v {
+		t.Error("Expected value to be true")
+	}
+	if l.Size() != len(expectedArr) {
+		t.Errorf("Expected size to be %d got %d", len(expectedArr), l.Size())
+	}
+	for i := 0; i < len(expectedArr); i++ {
+		if l.arr[i] != expectedArr[i] {
+			t.Errorf("Expected element at index %d to be %d", i, expectedArr[i])
+		}
+	}
+}
+
+func TestRemoveElementInArrayListNotInArrayList(t *testing.T) {
+	arr := []int{0, 1, 2}
+	l := ArrayListFromArray(nil, arr...)
+	v := l.RemoveElement(3)
+	if v {
+		t.Error("Expected value to be false")
+	}
 }
