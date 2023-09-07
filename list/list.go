@@ -186,14 +186,17 @@ func (l *LinkedList[T]) AddArrayAt(index int, arr []T) error {
 	if err != nil {
 		return err
 	}
-	prevNode := nodeAtPos.previous
 
-	if prevNode != nil {
+	if nodeAtPos == l.head {
+		l.head = tempList.head
+	} else {
+		prevNode := nodeAtPos.previous
 		prevNode.next = tempList.head
-		tempList.head = prevNode
+		tempList.head.previous = prevNode
 	}
 	nodeAtPos.previous = tempList.tail
-	tempList.tail = nodeAtPos
+	tempList.tail.next = nodeAtPos
+	l.size += tempList.size
 
 	return nil
 }
