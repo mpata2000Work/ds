@@ -18,6 +18,8 @@ func listOfFiveInts() LinkedList[int] {
 	return l
 }
 
+//TODO Improve tests
+
 func TestCreateEmptyListWithoutComparator(t *testing.T) {
 	l := NewList[int](nil)
 	if l.head != nil || l.tail != nil || l.size != 0 || l.Comparator != nil {
@@ -270,7 +272,7 @@ func TestGetLastInList(t *testing.T) {
 
 func TestGetAtInEmptyList(t *testing.T) {
 	l := NewList[int](comp)
-	_, err := l.GetAt(0)
+	_, err := l.Get(0)
 	if err == nil {
 		t.Error("Error wasnt raised")
 	}
@@ -278,7 +280,7 @@ func TestGetAtInEmptyList(t *testing.T) {
 
 func TestGetAtInListFirstHalf(t *testing.T) {
 	l := listOfFiveInts()
-	v, err := l.GetAt(2)
+	v, err := l.Get(2)
 	if err != nil {
 		t.Error("Error was raised")
 	}
@@ -289,7 +291,7 @@ func TestGetAtInListFirstHalf(t *testing.T) {
 
 func TestGetAtInListSecondHalf(t *testing.T) {
 	l := listOfFiveInts()
-	v, err := l.GetAt(4)
+	v, err := l.Get(4)
 	if err != nil {
 		t.Error("Error was raised")
 	}
@@ -300,7 +302,7 @@ func TestGetAtInListSecondHalf(t *testing.T) {
 
 func TestGetAtInListOutOfBounds(t *testing.T) {
 	l := listOfFiveInts()
-	_, err := l.GetAt(5)
+	_, err := l.Get(5)
 	if err == nil {
 		t.Error("Error wasnt raised")
 	}
@@ -308,7 +310,7 @@ func TestGetAtInListOutOfBounds(t *testing.T) {
 
 func TestGetAtInListOutOfBoundsNegative(t *testing.T) {
 	l := listOfFiveInts()
-	_, err := l.GetAt(-1)
+	_, err := l.Get(-1)
 	if err == nil {
 		t.Error("Error wasnt raised")
 	}
@@ -701,7 +703,7 @@ func TestForEachInListNilFunction(t *testing.T) {
 
 func TestListFromArray(t *testing.T) {
 	arr := []int{0, 1, 2, 3, 4}
-	l := ListFromArray(arr, comp)
+	l := LinkedListFromArray(arr, comp)
 	if l.head.value != 0 || l.tail.value != 4 || l.size != 5 {
 		t.Error("List isnt correct Expected [0 1 2 3 4] got ", l)
 	}
@@ -709,14 +711,14 @@ func TestListFromArray(t *testing.T) {
 
 func TestListFromArrayEmptyArray(t *testing.T) {
 	arr := []int{}
-	l := ListFromArray(arr, comp)
+	l := LinkedListFromArray(arr, comp)
 	if l.head != nil || l.tail != nil || l.size != 0 {
 		t.Error("List isnt correct Expected [] got ", l)
 	}
 }
 
 func TestListFromArrayNilArray(t *testing.T) {
-	l := ListFromArray(nil, comp)
+	l := LinkedListFromArray(nil, comp)
 	if l.head != nil || l.tail != nil || l.size != 0 {
 		t.Error("List isnt correct Expected [] got ", l)
 	}
@@ -869,7 +871,7 @@ func TestSetListAtEnd(t *testing.T) {
 
 func TestAddArrayInEmptyList(t *testing.T) {
 	l := NewList[int](comp)
-	l.AddArray([]int{0, 1, 2, 3, 4})
+	l.AddAll([]int{0, 1, 2, 3, 4}...)
 	if l.head.value != 0 || l.tail.value != 4 || l.size != 5 {
 		t.Error("List isnt correct Expected [0 1 2 3 4] got ", l)
 	}
@@ -877,11 +879,11 @@ func TestAddArrayInEmptyList(t *testing.T) {
 
 func TestAddArrayInList(t *testing.T) {
 	l := listOfFiveInts()
-	l.AddArray([]int{5, 6, 7, 8, 9})
+	l.AddAll([]int{5, 6, 7, 8, 9}...)
 	if l.head.value != 0 || l.tail.value != 9 || l.size != 10 {
 		t.Error("List isnt correct Expected [0 1 2 3 4 5 6 7 8 9] got ", l)
 	}
-	val, err := l.GetAt(7)
+	val, err := l.Get(7)
 	if err != nil {
 		t.Error("Error was raised ", err)
 	}
@@ -892,15 +894,7 @@ func TestAddArrayInList(t *testing.T) {
 
 func TestAddArrayWithEmptyArray(t *testing.T) {
 	l := listOfFiveInts()
-	l.AddArray([]int{})
-	if l.head.value != 0 || l.tail.value != 4 || l.size != 5 {
-		t.Error("List isnt correct Expected [0 1 2 3 4] got ", l)
-	}
-}
-
-func TestAddArrayWithNilArray(t *testing.T) {
-	l := listOfFiveInts()
-	l.AddArray(nil)
+	l.AddAll([]int{}...)
 	if l.head.value != 0 || l.tail.value != 4 || l.size != 5 {
 		t.Error("List isnt correct Expected [0 1 2 3 4] got ", l)
 	}
@@ -921,7 +915,7 @@ func TestAddArrayAtStartInList(t *testing.T) {
 		arr := l.ToArray()
 		t.Error("List isnt correct Expected [5 6 7 8 9 0 1 2 3 4] got ", arr)
 	}
-	val, err := l.GetAt(7)
+	val, err := l.Get(7)
 	if err != nil {
 		t.Error("Error was raised ", err)
 	}
@@ -953,7 +947,7 @@ func TestAddArrayAtEndInList(t *testing.T) {
 	if l.head.value != 0 || l.tail.value != 9 || l.size != 10 {
 		t.Error("List isnt correct Expected [0 1 2 3 4 5 6 7 8 9] got ", l)
 	}
-	val, err := l.GetAt(7)
+	val, err := l.Get(7)
 	if err != nil {
 		t.Error("Error was raised ", err)
 	}
@@ -975,21 +969,21 @@ func TestAddArrayAtMiddleInList(t *testing.T) {
 		}
 	}
 
-	val, err := l.GetAt(2)
+	val, err := l.Get(2)
 	if err != nil {
 		t.Error("Error was raised ", err)
 	}
 	if val != 5 {
 		t.Error("Value isnt correct Expected 5 got ", val)
 	}
-	val, err = l.GetAt(4)
+	val, err = l.Get(4)
 	if err != nil {
 		t.Error("Error was raised ", err)
 	}
 	if val != 7 {
 		t.Error("Value isnt correct Expected 7 got ", val)
 	}
-	val, err = l.GetAt(6)
+	val, err = l.Get(6)
 	if err != nil {
 		t.Error("Error was raised ", err)
 	}

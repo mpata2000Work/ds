@@ -21,11 +21,11 @@ func main() {
 	hi.PrettyPrint()
 
 	fmt.Println("Size: ", hi.Size())
-	r, _ := hi.GetAt(1)
+	r, _ := hi.Get(1)
 	fmt.Println("At index 1: ", r)
-	r, _ = hi.GetAt(4)
+	r, _ = hi.Get(4)
 	fmt.Println("At index 4: ", r)
-	t, err := hi.GetAt(5)
+	t, err := hi.Get(5)
 	fmt.Println("At index 5: ", t)
 	fmt.Println("Err: ", err)
 
