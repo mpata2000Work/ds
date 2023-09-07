@@ -159,19 +159,22 @@ func (l *ArrayList[T]) RemoveElement(value T) bool {
 		return false
 	}
 	_, err = l.Remove(index)
-	if err != nil {
-		return false
-	}
-	return true
+	return err == nil
 }
 
 func (l *ArrayList[T]) ForEach(f func(T) T) {
+	if f == nil {
+		return
+	}
 	for i, v := range l.arr {
 		l.arr[i] = f(v)
 	}
 }
 
 func (l *ArrayList[T]) Map(f func(T) T) List[T] {
+	if f == nil {
+		return NewArrayList[T](l.Comparator)
+	}
 	arrMap := make([]T, l.Size())
 	for i, v := range l.arr {
 		arrMap[i] = f(v)
@@ -180,6 +183,9 @@ func (l *ArrayList[T]) Map(f func(T) T) List[T] {
 }
 
 func (l *ArrayList[T]) Filter(f func(T) bool) List[T] {
+	if f == nil {
+		return NewArrayList[T](l.Comparator)
+	}
 	arrFilter := make([]T, 0, l.Size())
 	for _, v := range l.arr {
 		if f(v) {
@@ -193,4 +199,8 @@ func (l *ArrayList[T]) ToSlice() []T {
 	arr := make([]T, l.Size())
 	copy(arr, l.arr)
 	return arr
+}
+
+func (l *ArrayList[T]) Clear() {
+	l.arr = make([]T, 0)
 }

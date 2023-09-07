@@ -90,6 +90,16 @@ func NewArrayList[T any](comp Comparator[T]) *ArrayList[T] {
 	return &ArrayList[T]{make([]T, 0), comp}
 }
 
+func ArrayListFromArray[T any](comp Comparator[T], arr ...T) *ArrayList[T] {
+	l := NewArrayList[T](comp)
+	if len(arr) == 0 {
+		return l
+	}
+
+	l.AddAll(arr...)
+	return l
+}
+
 func NewList[T any](t string, com Comparator[T]) List[T] {
 	if t == "LinkedList" {
 		return NewLinkedList[T](com)
