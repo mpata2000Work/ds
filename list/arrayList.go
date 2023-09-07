@@ -57,14 +57,14 @@ func (l *ArrayList[T]) AddAll(arr ...T) error {
 
 func (l *ArrayList[T]) Get(index int) (T, error) {
 	if index < 0 || index >= l.Size() {
-		return *new(T), errors.New("IndexOutOfBounds")
+		return *new(T), ErrorOutOfBounds
 	}
 	return l.arr[index], nil
 }
 
 func (l *ArrayList[T]) Set(index int, value T) error {
 	if index < 0 || index >= l.Size() {
-		return errors.New("IndexOutOfBounds")
+		return ErrorOutOfBounds
 	}
 	l.arr[index] = value
 	return nil
@@ -72,7 +72,7 @@ func (l *ArrayList[T]) Set(index int, value T) error {
 
 func (l *ArrayList[T]) RemoveFirst() (T, error) {
 	if l.IsEmpty() {
-		return *new(T), errors.New("EmptyList")
+		return *new(T), ErrorNoSuchElement
 	}
 	value := l.arr[0]
 	l.arr = l.arr[1:]
@@ -81,7 +81,7 @@ func (l *ArrayList[T]) RemoveFirst() (T, error) {
 
 func (l *ArrayList[T]) RemoveLast() (T, error) {
 	if l.IsEmpty() {
-		return *new(T), errors.New("EmptyList")
+		return *new(T), ErrorNoSuchElement
 	}
 	value := l.arr[l.Size()-1]
 	l.arr = l.arr[:l.Size()-1]
@@ -90,7 +90,7 @@ func (l *ArrayList[T]) RemoveLast() (T, error) {
 
 func (l *ArrayList[T]) Remove(index int) (T, error) {
 	if index < 0 || index >= l.Size() {
-		return *new(T), errors.New("IndexOutOfBounds")
+		return *new(T), ErrorOutOfBounds
 	}
 	if index == 0 {
 		return l.RemoveFirst()
@@ -124,7 +124,7 @@ func (l *ArrayList[T]) IndexOf(value T) int {
 func (l *ArrayList[T]) RemoveElement(value T) (T, error) {
 	index := l.IndexOf(value)
 	if index == -1 {
-		return *new(T), errors.New("NoSuchElement")
+		return *new(T), ErrorNoSuchElement
 	}
 	return l.Remove(index)
 }

@@ -5,12 +5,6 @@ import (
 	"fmt"
 )
 
-var (
-	ErrorNoSuchElement     = errors.New("NoSuchElement")
-	ErrorOutOfBounds       = errors.New("OutOfBounds")
-	ErrorNoElementsInArray = errors.New("NoElementsInArray")
-)
-
 type Node[T any] struct {
 	next, previous *Node[T]
 	value          T
@@ -54,7 +48,7 @@ func (l *LinkedList[T]) getNodeAt(index int) (*Node[T], error) {
 		return nil, ErrorNoSuchElement
 	}
 	if index >= l.size || index < 0 {
-		return nil, errors
+		return nil, ErrorOutOfBounds
 	}
 	var node *Node[T]
 	var moveForward bool
@@ -160,7 +154,7 @@ func (l *LinkedList[T]) AddAll(arr ...T) error {
 // AddArrayAt Adds all values to the given index of the list. Returns error if index is out of bounds or if array is empty
 func (l *LinkedList[T]) AddArrayAt(index int, arr []T) error {
 	if index > l.size || index < 0 {
-		return errors
+		return ErrorOutOfBounds
 	}
 	if len(arr) == 0 {
 		return ErrorNoElementsInArray

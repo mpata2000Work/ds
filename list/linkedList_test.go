@@ -18,8 +18,6 @@ func listOfFiveInts() LinkedList[int] {
 	return l
 }
 
-//TODO Improve tests
-
 func TestCreateEmptyListWithoutComparator(t *testing.T) {
 	l := NewLinkedList[int](nil)
 	if l.head != nil || l.tail != nil || l.size != 0 || l.Comparator != nil {

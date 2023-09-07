@@ -1,5 +1,15 @@
 package list
 
+import (
+	"errors"
+)
+
+var (
+	ErrorNoSuchElement     = errors.New("NoSuchElement")
+	ErrorOutOfBounds       = errors.New("OutOfBounds")
+	ErrorNoElementsInArray = errors.New("NoElementsInArray")
+)
+
 type Stack[T any] interface {
 	Pop() (T, error)
 	Push(T)
