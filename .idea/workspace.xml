@@ -6,11 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="5cb4923c-5dd2-4f51-99b0-9147670fc589" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/list/arrayList.go" beforeDir="false" afterPath="$PROJECT_DIR$/list/arrayList.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/list/arrayList_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/list/arrayList_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/list/linkedList.go" beforeDir="false" afterPath="$PROJECT_DIR$/list/linkedList.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/list/linkedList_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/list/linkedList_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/list/list.go" beforeDir="false" afterPath="$PROJECT_DIR$/list/list.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,7 +41,30 @@
     "node.js.selected.package.eslint": "(autodetect)"
   }
 }]]></component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Go Test.TestCanCreateEmptyMinHeap in dataStructures/heap">
+    <configuration name="TestCanCreateEmptyMinHeap in dataStructures/heap" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="DataStructures" />
+      <working_directory value="$PROJECT_DIR$/heap" />
+      <root_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="dataStructures/heap" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <pattern value="^\QTestCanCreateEmptyMinHeap\E$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="go test dataStructures/heap" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="DataStructures" />
+      <working_directory value="$PROJECT_DIR$/heap" />
+      <root_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="dataStructures/heap" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <method v="2" />
+    </configuration>
     <configuration name="go test dataStructures/list" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="DataStructures" />
       <working_directory value="$PROJECT_DIR$/list" />
@@ -60,6 +78,8 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Go Test.TestCanCreateEmptyMinHeap in dataStructures/heap" />
+        <item itemvalue="Go Test.go test dataStructures/heap" />
         <item itemvalue="Go Test.go test dataStructures/list" />
       </list>
     </recent_temporary>
@@ -83,6 +103,7 @@
     </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/DataStructures$go_test_dataStructures_heap.out" NAME="go test dataStructures/heap Coverage Results" MODIFIED="1694203178166" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="GoCoverage" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
     <SUITE FILE_PATH="coverage/DataStructures$go_test_dataStructures_list.out" NAME="go test dataStructures/list Coverage Results" MODIFIED="1694131507280" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="GoCoverage" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
   </component>
 </project>
