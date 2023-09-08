@@ -12,7 +12,6 @@ type Node[T any] struct {
 type LinkedList[T any] struct {
 	head, tail *Node[T]
 	size       int
-	Comparator func(T, T) int
 }
 
 // IsEmpty Returns true if the list is empty
@@ -85,7 +84,7 @@ func (l *LinkedList[T]) Get(index int) (T, error) {
 // AddFirst Adds value to the begining of the list
 func (l *LinkedList[T]) AddFirst(value T) {
 	if l.IsEmpty() {
-		l.AddLast(value)
+		l.Append(value)
 		return
 	}
 	new_node := Node[T]{nil, nil, value}
@@ -96,7 +95,7 @@ func (l *LinkedList[T]) AddFirst(value T) {
 }
 
 // AddLast Adds value to the end of the list
-func (l *LinkedList[T]) AddLast(value T) {
+func (l *LinkedList[T]) Append(value T) {
 	newNode := Node[T]{nil, nil, value}
 
 	if l.IsEmpty() {
@@ -116,7 +115,7 @@ func (l *LinkedList[T]) Add(index int, value T) error {
 		return nil
 	}
 	if index == l.size {
-		l.AddLast(value)
+		l.Append(value)
 		return nil
 	}
 
@@ -145,7 +144,7 @@ func (l *LinkedList[T]) AddAll(arr ...T) error {
 	}
 
 	for _, v := range arr {
-		l.AddLast(v)
+		l.Append(v)
 	}
 	return nil
 }
@@ -162,7 +161,7 @@ func (l *LinkedList[T]) AddAllAt(index int, arr ...T) error {
 	if err != nil {
 		return err
 	}
-	tempList := LinkedListFromArray[T](nil, arr...)
+	tempList := LinkedListFromArray[T](arr...)
 
 	if nodeAtPos == l.head {
 		l.head = tempList.head
@@ -239,11 +238,11 @@ func (l *LinkedList[T]) Remove(index int) (T, error) {
 }
 
 // getNodeByValue Returns the index and node of the first occurence of value in the list or -1 and nil if it isnt in the list
-func (l *LinkedList[T]) getNodeByValue(value T) (int, *Node[T]) {
+func (l *LinkedList[T]) getNodeByValue(value T, cmp Comparator[T]) (int, *Node[T]) {
 	node := l.head
 	index := 0
 	for node != nil {
-		if l.Comparator(node.value, value) == 0 {
+		if cmp(node.value, value) == 0 {
 			return index, node
 		}
 		node = node.next
@@ -253,11 +252,11 @@ func (l *LinkedList[T]) getNodeByValue(value T) (int, *Node[T]) {
 }
 
 // RemoveElement Removes the first occurence of value in the list and returns true or false if it isnt in the list
-func (l *LinkedList[T]) RemoveElement(value T) bool {
-	if l.IsEmpty() || l.Comparator == nil {
+func (l *LinkedList[T]) RemoveElement(value T, cmp Comparator[T]) bool {
+	if l.IsEmpty() || cmp == nil {
 		return false
 	}
-	i, node := l.getNodeByValue(value)
+	i, node := l.getNodeByValue(value, cmp)
 	switch i {
 	case -1:
 		return false
@@ -294,18 +293,18 @@ func (l *LinkedList[T]) ToSlice() []T {
 
 // IndexOf Returns the index of the first occurence of value in the list or -1 if it isnt in the list.
 // Returns error if comparator is nil
-func (l *LinkedList[T]) IndexOf(value T) (int, error) {
-	if l.Comparator == nil {
+func (l *LinkedList[T]) IndexOf(value T, cmp Comparator[T]) (int, error) {
+	if cmp == nil {
 		return -1, errors.New("comparator is nil")
 	}
-	i, _ := l.getNodeByValue(value)
+	i, _ := l.getNodeByValue(value, cmp)
 	return i, nil
 }
 
 // Contains Returns true if the list contains the given value.
 // Returns error if comparator is nil
-func (l *LinkedList[T]) Contains(value T) (bool, error) {
-	index, err := l.IndexOf(value)
+func (l *LinkedList[T]) Contains(value T, cmp Comparator[T]) (bool, error) {
+	index, err := l.IndexOf(value, cmp)
 	return index != -1, err
 }
 
@@ -323,13 +322,13 @@ func (l *LinkedList[T]) ForEach(f func(T) T) {
 
 // Map Applies the function f to each element of the lists and returns a new list with the results
 func (l *LinkedList[T]) Map(f func(T) T) List[T] {
-	mapList := NewLinkedList[T](l.Comparator)
+	mapList := NewLinkedList[T]()
 	if f == nil {
 		return mapList
 	}
 	node := l.head
 	for node != nil {
-		mapList.AddLast(f(node.value))
+		mapList.Append(f(node.value))
 		node = node.next
 	}
 	return mapList
@@ -337,18 +336,23 @@ func (l *LinkedList[T]) Map(f func(T) T) List[T] {
 
 // Filter Applies the function f to each element of the lists and returns a new list with the elements that returned true
 func (l *LinkedList[T]) Filter(f func(T) bool) List[T] {
-	filtList := NewLinkedList[T](l.Comparator)
+	filtList := NewLinkedList[T]()
 	if f == nil {
 		return filtList
 	}
 	node := l.head
 	for node != nil {
 		if f(node.value) {
-			filtList.AddLast(node.value)
+			filtList.Append(node.value)
 		}
 		node = node.next
 	}
 	return filtList
+}
+
+// Copy Returns a new list with the same values as the original
+func (l *LinkedList[T]) Copy() List[T] {
+	return l.Map(func(v T) T { return v })
 }
 
 //-----------------------------//
@@ -364,7 +368,7 @@ func (l *LinkedList[T]) Pop() (T, error) {
 // Push Adds value to the top of the stack.
 // Equivalent to AddLast()
 func (l *LinkedList[T]) Push(value T) {
-	l.AddLast(value)
+	l.Append(value)
 }
 
 // Top Returns the value at the top of the stack without removing it. Returns error if stack is empty.
@@ -380,7 +384,7 @@ func (l *LinkedList[T]) Top() (T, error) {
 // Enqueue Adds value to the end of the queue.
 // Equivalent to AddLast()
 func (l *LinkedList[T]) Enqueue(value T) {
-	l.AddLast(value)
+	l.Append(value)
 }
 
 // Dequeue Removes the value at the front of the queue and retrieves the value. Returns error if queue is empty.

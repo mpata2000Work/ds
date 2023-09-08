@@ -34,20 +34,21 @@ type List[T any] interface {
 	GetFirst() (T, error)
 	GetLast() (T, error)
 	AddFirst(T)
-	AddLast(T)
+	Append(T)
 	Add(int, T) error
 	AddAll(...T) error
 	AddAllAt(int, ...T) error
 	RemoveFirst() (T, error)
 	RemoveLast() (T, error)
 	Remove(int) (T, error)
-	RemoveElement(T) bool
-	Contains(T) (bool, error)
-	IndexOf(T) (int, error)
+	RemoveElement(T, Comparator[T]) bool
+	Contains(T, Comparator[T]) (bool, error)
+	IndexOf(T, Comparator[T]) (int, error)
 	ForEach(func(T) T)
 	Map(func(T) T) List[T]
 	Filter(func(T) bool) List[T]
 	ToSlice() []T
+	Clear()
 }
 
 // Comparator function should return
@@ -61,13 +62,13 @@ type Comparator[T any] func(T, T) int
 // 0 if ir is equal
 // 0>(Greater than 0) if it v1 is greater than v2
 // 0<(Less than 0) if it v1 is lower than v2
-func NewLinkedList[T any](comp Comparator[T]) *LinkedList[T] {
-	return &LinkedList[T]{nil, nil, 0, comp}
+func NewLinkedList[T any]() *LinkedList[T] {
+	return &LinkedList[T]{nil, nil, 0}
 }
 
 // LinkedListFromArray Creates a new LinkedList from the given array
-func LinkedListFromArray[T any](comp Comparator[T], arr ...T) *LinkedList[T] {
-	l := NewLinkedList[T](comp)
+func LinkedListFromArray[T any](arr ...T) *LinkedList[T] {
+	l := NewLinkedList[T]()
 	if len(arr) == 0 {
 		return l
 	}
@@ -86,12 +87,12 @@ func NewQueue[T any]() Queue[T] {
 	return new(LinkedList[T])
 }
 
-func NewArrayList[T any](comp Comparator[T]) *ArrayList[T] {
-	return &ArrayList[T]{make([]T, 0), comp}
+func NewArrayList[T any]() *ArrayList[T] {
+	return &ArrayList[T]{make([]T, 0)}
 }
 
-func ArrayListFromArray[T any](comp Comparator[T], arr ...T) *ArrayList[T] {
-	l := NewArrayList[T](comp)
+func ArrayListFromArray[T any](arr ...T) *ArrayList[T] {
+	l := NewArrayList[T]()
 	if len(arr) == 0 {
 		return l
 	}
@@ -100,9 +101,13 @@ func ArrayListFromArray[T any](comp Comparator[T], arr ...T) *ArrayList[T] {
 	return l
 }
 
-func NewList[T any](t string, com Comparator[T]) List[T] {
+func NewList[T any](t string) List[T] {
 	if t == "LinkedList" {
-		return NewLinkedList[T](com)
+		return NewLinkedList[T]()
 	}
-	return NewArrayList[T](com)
+	return NewArrayList[T]()
+}
+
+func intComp(v1 int, v2 int) int {
+	return v1 - v2
 }
