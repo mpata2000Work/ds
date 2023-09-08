@@ -5,6 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5cb4923c-5dd2-4f51-99b0-9147670fc589" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/list/arrayList.go" beforeDir="false" afterPath="$PROJECT_DIR$/list/arrayList.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/list/arrayList_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/list/arrayList_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/list/linkedList.go" beforeDir="false" afterPath="$PROJECT_DIR$/list/linkedList.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/list/linkedList_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/list/linkedList_test.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -67,6 +71,6 @@
     <settings-migrated>true</settings-migrated>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/DataStructures$go_test_dataStructures_list.out" NAME="go test dataStructures/list Coverage Results" MODIFIED="1694129928908" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="GoCoverage" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+    <SUITE FILE_PATH="coverage/DataStructures$go_test_dataStructures_list.out" NAME="go test dataStructures/list Coverage Results" MODIFIED="1694131377701" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="GoCoverage" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
   </component>
 </project>

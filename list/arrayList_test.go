@@ -893,8 +893,53 @@ func TestRemoveElementInArrayList(t *testing.T) {
 
 func TestRemoveElementInArrayListNotInArrayList(t *testing.T) {
 	arr := []int{0, 1, 2}
-	l := ArrayListFromArray(nil, arr...)
+	l := ArrayListFromArray(compArrayListTest, arr...)
 	v := l.RemoveElement(3)
+	if v {
+		t.Error("Expected value to be false")
+	}
+}
+
+func TestRemoveElementInArrayListAtStart(t *testing.T) {
+	arr := []int{0, 1, 2}
+	l := ArrayListFromArray(compArrayListTest, arr...)
+	expectedArr := []int{1, 2}
+	v := l.RemoveElement(0)
+	if !v {
+		t.Error("Expected value to be true")
+	}
+	if l.Size() != len(expectedArr) {
+		t.Errorf("Expected size to be %d got %d", len(expectedArr), l.Size())
+	}
+	for i := 0; i < len(expectedArr); i++ {
+		if l.arr[i] != expectedArr[i] {
+			t.Errorf("Expected element at index %d to be %d", i, expectedArr[i])
+		}
+	}
+}
+
+func TestRemoveElementInArrayListAtEnd(t *testing.T) {
+	arr := []int{0, 1, 2}
+	l := ArrayListFromArray(compArrayListTest, arr...)
+	expectedArr := []int{0, 1}
+	v := l.RemoveElement(2)
+	if !v {
+		t.Error("Expected value to be true")
+	}
+	if l.Size() != len(expectedArr) {
+		t.Errorf("Expected size to be %d got %d", len(expectedArr), l.Size())
+	}
+	for i := 0; i < len(expectedArr); i++ {
+		if l.arr[i] != expectedArr[i] {
+			t.Errorf("Expected element at index %d to be %d", i, expectedArr[i])
+		}
+	}
+}
+
+func TestRemoveElementInArrayListWithNilComp(t *testing.T) {
+	arr := []int{0, 1, 2}
+	l := ArrayListFromArray(nil, arr...)
+	v := l.RemoveElement(0)
 	if v {
 		t.Error("Expected value to be false")
 	}

@@ -323,11 +323,10 @@ func TestGetAtInListFirstHalf(t *testing.T) {
 }
 
 func TestGetAtInListSecondHalf(t *testing.T) {
-	arr := []int{0, 1, 2}
+	arr := []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}
 	l := LinkedListFromArray(comp, arr...)
-	l.AddLast(3) // 0 1 2 3
 	expected := 2
-	index := 2
+	index := 9
 	v, err := l.Get(index)
 	if err != nil {
 		t.Error("Error was raised")
@@ -1187,6 +1186,45 @@ func TestRemoveElementNotInLinkedList(t *testing.T) {
 	v := l.RemoveElement(5)
 	if v {
 		t.Error("Value was found when not in list")
+	}
+}
+
+func TestRemoveElementWithoutComparatorLinkedList(t *testing.T) {
+	l := NewLinkedList[int](nil)
+	l.AddLast(0)
+	v := l.RemoveElement(0)
+	if v {
+		t.Error("Value was found when not in list")
+	}
+}
+
+func TestRemoveElementAtStartInLinkedList(t *testing.T) {
+	arr := []int{0, 1, 2}
+	l := LinkedListFromArray(comp, arr...)
+	v := l.RemoveElement(0)
+	if !v {
+		t.Error("Value wasnt removed when in list")
+	}
+	if l.head.value != 1 || l.tail.value != 2 || l.size != 2 {
+		t.Errorf("Other values were changed. Expected for head 1 got %d, for tail 2 got %d and for size 2 got %d", l.head.value, l.tail.value, l.size)
+	}
+	if l.head.next.value != 2 {
+		t.Errorf("Value isnt correct Expected 2 got %d", l.head.next.value)
+	}
+}
+
+func TestRemoveElementAtEndInLinkedList(t *testing.T) {
+	arr := []int{0, 1, 2}
+	l := LinkedListFromArray(comp, arr...)
+	v := l.RemoveElement(2)
+	if !v {
+		t.Error("Value wasnt removed when in list")
+	}
+	if l.head.value != 0 || l.tail.value != 1 || l.size != 2 {
+		t.Errorf("Other values were changed. Expected for head 0 got %d, for tail 1 got %d and for size 2 got %d", l.head.value, l.tail.value, l.size)
+	}
+	if l.head.next.value != 1 {
+		t.Errorf("Value isnt correct Expected 1 got %d", l.head.next.value)
 	}
 }
 

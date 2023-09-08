@@ -152,20 +152,17 @@ func (l *LinkedList[T]) AddAll(arr ...T) error {
 
 // AddArrayAt Adds all values to the given index of the list. Returns error if index is out of bounds or if array is empty
 func (l *LinkedList[T]) AddAllAt(index int, arr ...T) error {
-	if index > l.size || index < 0 {
-		return ErrorOutOfBounds
-	}
 	if len(arr) == 0 {
 		return ErrorNoElementsInArray
 	}
 	if index == l.size {
 		return l.AddAll(arr...)
 	}
-	tempList := LinkedListFromArray[T](nil, arr...)
 	nodeAtPos, err := l.getNodeAt(index)
 	if err != nil {
 		return err
 	}
+	tempList := LinkedListFromArray[T](nil, arr...)
 
 	if nodeAtPos == l.head {
 		l.head = tempList.head
@@ -257,7 +254,7 @@ func (l *LinkedList[T]) getNodeByValue(value T) (int, *Node[T]) {
 
 // RemoveElement Removes the first occurence of value in the list and returns true or false if it isnt in the list
 func (l *LinkedList[T]) RemoveElement(value T) bool {
-	if l.IsEmpty() {
+	if l.IsEmpty() || l.Comparator == nil {
 		return false
 	}
 	i, node := l.getNodeByValue(value)

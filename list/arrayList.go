@@ -154,11 +154,11 @@ func (l *ArrayList[T]) IndexOf(value T) (int, error) {
 }
 
 func (l *ArrayList[T]) RemoveElement(value T) bool {
-	index, err := l.IndexOf(value)
-	if err != nil {
+	if l.Comparator == nil {
 		return false
 	}
-	_, err = l.Remove(index)
+	index, _ := l.IndexOf(value)
+	_, err := l.Remove(index)
 	return err == nil
 }
 
